@@ -1,0 +1,201 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Gaegu", cursive;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.opening {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 80px;
+  text-align: center;
+  padding-bottom: clamp(30px, 5vw, 80px);
+}
+
+.title-drawing {
+  max-width: 45%;
+  height: auto;
+}
+
+
+.part1 {
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+}
+
+.photo-stage {
+  width: 80%;
+  max-width: 1100px;
+  min-height: 310px;
+  margin: 0 auto;
+
+  position: relative;
+}
+
+.photo-slot {
+  display: none;
+  width: 15%;
+
+  cursor: pointer;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 1.2s ease-in-out;
+}
+
+.photo-slot img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.girl-button {
+  
+  white-space: nowrap;
+  width: 15%;
+  border: none;
+  background: none;
+  padding: 0;
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  cursor: pointer;
+}
+
+.girl-drawing {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+#instructionText {
+  font-size: 28px;
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 130px);
+  transform: translateX(-50%);
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+#secretText {
+  display: none;
+  width: 80%;
+  max-width: 700px;
+  margin: 8px auto 0;
+  text-align: center;
+}
+
+
+
+
+.part2 {
+  padding: 150px 10%;
+}
+
+.architecture-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.drawing-placeholder {
+  width: 140px;
+}
+
+.drawing-placeholder img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.photo-placeholder {
+  width: 300px;
+  text-align: center;
+}
+
+.photo-screen {
+  width: 100%;
+}
+
+.building-photo {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.drawing-placeholder .far {
+  width: 50px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.part2 h2 {
+  text-align: center;
+  width: 80%;
+  margin: 8px auto 0;
+}
+
+
+
+
+
+.dolly-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 90px;
+}
+
+.dolly-title img {
+  width: 120px;
+  height: auto;
+}
+
+.gif-frame {
+  position: relative;
+  width: 420px;
+}
+
+.frame-drawing {
+  width: 100%;
+  display: block;
+}
+
+.dolly-gif {
+  position: absolute;
+
+  width: 70%;
+
+  left: 50%;
+  top: 47%;
+
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.eggplant-drawing img {
+  width: 80px;
+  height: auto;
+}
+
+.part3 {
+  padding-bottom: 120px;
+}
