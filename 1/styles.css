@@ -213,3 +213,102 @@ dialog button {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 0.42in;
+  }
+
+  html { scroll-behavior: auto; }
+  body { font-size: 13px; }
+  main { overflow: visible; }
+
+  .opening {
+    min-height: 9.5in;
+    padding: 0;
+  }
+
+  .title-drawing { width: 62%; }
+
+  .project-explanation {
+    padding: 0 0 20px;
+    break-after: page;
+  }
+
+  .project-explanation img {
+    width: 68%;
+    margin: -80px auto -45px;
+  }
+
+  .part {
+    width: 100%;
+    padding: 28px 0 40px;
+  }
+
+  .part-drawing {
+    width: 31%;
+    margin-bottom: 25px;
+  }
+
+  .part-drawing-emir {
+    width: 23%;
+    margin-bottom: 25px;
+  }
+
+  .explanation {
+    max-width: 92%;
+    margin-bottom: 28px;
+  }
+
+  .explanation p {
+    margin: 7px 0;
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  .photo-grid { gap: 13px; }
+  .low-grid,
+  .high-grid,
+  .discovery-grid { grid-template-columns: repeat(4, 1fr); }
+
+  figure,
+  .result-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    transform: none;
+  }
+
+  figure img { padding: 3px; border-width: 1.5px; }
+  figcaption { margin-top: 5px; font-size: 15px; }
+  .low-grid figcaption span { font-size: 11px; }
+
+  .source-example img { height: 155px; border: none; }
+
+  .result-card {
+    padding: 6px;
+    border-width: 1.5px;
+  }
+
+  .result-card img { height: 120px; }
+  .result-card figcaption { gap: 1px; padding: 5px 1px 1px; }
+  .result-card figcaption strong { font-size: 14px; }
+  .result-card figcaption span { font-size: 11px; }
+
+  .high-grid .result-card:nth-last-child(2) { grid-column: auto; }
+
+  .refine-graphic {
+    width: 58%;
+    margin-bottom: 30px;
+  }
+
+  .emir-row {
+    grid-template-columns: 1fr 42px 1fr;
+    gap: 10px;
+  }
+
+  .arrow { font-size: 30px; }
+  .arrow span { font-size: 12px; }
+  footer { display: none; }
+  dialog { display: none; }
+}
