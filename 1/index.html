@@ -8,72 +8,72 @@
 </head>
 <body>
   <section class="opening">
-    <img src="../pics/title.svg" class="title-drawing" alt="CS180 Project 1">
+    <img src="./pics/title.svg" class="title-drawing" alt="CS180 Project 1">
   </section>
   <section class="project-explanation">
-    <img src="../pics/explanation.png" alt="How the three color channels are combined">
+    <img src="./pics/explanation.png" alt="How the three color channels are combined">
   </section>
   <main>
     <section class="part part1">
-      <img src="../pics/part1.svg" class="part-drawing" alt="Part 1">
+      <img src="./pics/part1.svg" class="part-drawing" alt="Part 1">
       <div class="explanation">
         <p>The glass plate contains 3 grayscale exposures in BGR order. I split it into 3 equal parts, keep B fixed, and shift G and R over a search window from −15 to 15 pixels.</p>
         <p>For each shift, I compare the center 40% of the images so the borders won't decide the match.</p>
         <p>I use NCC: both crops are mean-centered and normalized, then their dot product is calculated. The shift with the highest NCC wins.</p>
       </div>
       <div class="photo-grid low-grid">
-        <figure class="source-example"><img src="../CS180_fa2026_proj1_data/cathedral.jpg" alt="Original cathedral glass plate with three grayscale exposures"><figcaption><strong>original glass plate</strong></figcaption></figure>
-        <figure><img src="../new_img/cathedral.jpg" alt="Colorized cathedral"><figcaption><strong>cathedral</strong><span>G offset: (2, 5)</span><span>R offset: (3, 12)</span></figcaption></figure>
-        <figure><img src="../new_img/cathmonastery.jpg" alt="Colorized monastery"><figcaption><strong>monastery</strong><span>G offset: (2, -3)</span><span>R offset: (2, 3)</span></figcaption></figure>
-        <figure><img src="../new_img/tobolsk.jpg" alt="Colorized tobolsk"><figcaption><strong>tobolsk</strong><span>G offset: (3, 3)</span><span>R offset: (3, 7)</span></figcaption></figure>
+        <figure class="source-example"><img src="./CS180_fa2026_proj1_data/cathedral.jpg" alt="Original cathedral glass plate with three grayscale exposures"><figcaption><strong>original glass plate</strong></figcaption></figure>
+        <figure><img src="./new_img/cathedral.jpg" alt="Colorized cathedral"><figcaption><strong>cathedral</strong><span>G offset: (2, 5)</span><span>R offset: (3, 12)</span></figcaption></figure>
+        <figure><img src="./new_img/cathmonastery.jpg" alt="Colorized monastery"><figcaption><strong>monastery</strong><span>G offset: (2, -3)</span><span>R offset: (2, 3)</span></figcaption></figure>
+        <figure><img src="./new_img/tobolsk.jpg" alt="Colorized tobolsk"><figcaption><strong>tobolsk</strong><span>G offset: (3, 3)</span><span>R offset: (3, 7)</span></figcaption></figure>
       </div>
     </section>
     <section class="part part2">
-      <img src="../pics/part2.svg" class="part-drawing" alt="Part 2">
+      <img src="./pics/part2.svg" class="part-drawing" alt="Part 2">
       <div class="explanation">
         <p>An exhaustive search at full resolution is too slow for the large TIFF scans. I use an image pyramid by repeatedly shrinking both channels to half size until the width is at most 400 pixels.</p>
         <p>After finding a displacement, at the next larger level, I double that estimate and search only a small radius around it.</p> 
         <p>Repeating this process gives a fast full-resolution alignment with the same NCC score.</p>
       </div>
       <div class="refine-graphic">
-        <img src="../pics/refine.png" class="refine-drawing" alt="Coarse-to-fine image pyramid refinement process">
+        <img src="./pics/refine.png" class="refine-drawing" alt="Coarse-to-fine image pyramid refinement process">
       </div>
       <div class="photo-grid high-grid">
-        <figure class="result-card"><img src="../new_img/church.jpg" alt="Colorized church"><figcaption><strong>church</strong><span>G offset: <mark>(4, 25)</mark></span><span>R offset: <mark>(-4, 58)</mark></span></figcaption></figure>
-        <figure class="result-card"><img src="../new_img/harvesters.jpg" alt="Colorized harvesters"><figcaption><strong>harvesters</strong><span>G offset: <mark>(17, 59)</mark></span><span>R offset: <mark>(15, 123)</mark></span></figcaption></figure>
-        <figure class="result-card"><img src="../new_img/icon.jpg" alt="Colorized icon"><figcaption><strong>icon</strong><span>G offset: <mark>(18, 41)</mark></span><span>R offset: <mark>(23, 90)</mark></span></figcaption></figure>
-        <figure class="result-card"><img src="../new_img/ilemselga.jpg" alt="Colorized ilemselga"><figcaption><strong>ilemselga</strong><span>G offset: <mark>(7, 41)</mark></span><span>R offset: <mark>(11, 132)</mark></span></figcaption></figure>
-        <figure class="result-card"><img src="../new_img/melons.jpg" alt="Colorized melons"><figcaption><strong>melons</strong><span>G offset: <mark>(10, 82)</mark></span><span>R offset: <mark>(13, 179)</mark></span></figcaption></figure>
-        <figure class="result-card"><img src="../new_img/religous_painting.jpg" alt="Colorized religious painting"><figcaption><strong>religious painting</strong><span>G offset: <mark>(4, 27)</mark></span><span>R offset: <mark>(7, 69)</mark></span></figcaption></figure>
-        <figure class="result-card"><img src="../new_img/self_portrait.jpg" alt="Colorized self portrait"><figcaption><strong>self portrait</strong><span>G offset: <mark>(29, 78)</mark></span><span>R offset: <mark>(37, 175)</mark></span></figcaption></figure>
-        <figure class="result-card"><img src="../new_img/siren.jpg" alt="Colorized siren"><figcaption><strong>siren</strong><span>G offset: <mark>(-5, 49)</mark></span><span>R offset: <mark>(-24, 96)</mark></span></figcaption></figure>
-        <figure class="result-card"><img src="../new_img/three_generations.jpg" alt="Colorized three generations"><figcaption><strong>three generations</strong><span>G offset: <mark>(14, 51)</mark></span><span>R offset: <mark>(12, 110)</mark></span></figcaption></figure>
-        <figure class="result-card"><img src="../new_img/wharf.jpg" alt="Colorized wharf"><figcaption><strong>wharf</strong><span>G offset: <mark>(-7, 15)</mark></span><span>R offset: <mark>(-15, 82)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/church.jpg" alt="Colorized church"><figcaption><strong>church</strong><span>G offset: <mark>(4, 25)</mark></span><span>R offset: <mark>(-4, 58)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/harvesters.jpg" alt="Colorized harvesters"><figcaption><strong>harvesters</strong><span>G offset: <mark>(17, 59)</mark></span><span>R offset: <mark>(15, 123)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/icon.jpg" alt="Colorized icon"><figcaption><strong>icon</strong><span>G offset: <mark>(18, 41)</mark></span><span>R offset: <mark>(23, 90)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/ilemselga.jpg" alt="Colorized ilemselga"><figcaption><strong>ilemselga</strong><span>G offset: <mark>(7, 41)</mark></span><span>R offset: <mark>(11, 132)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/melons.jpg" alt="Colorized melons"><figcaption><strong>melons</strong><span>G offset: <mark>(10, 82)</mark></span><span>R offset: <mark>(13, 179)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/religous_painting.jpg" alt="Colorized religious painting"><figcaption><strong>religious painting</strong><span>G offset: <mark>(4, 27)</mark></span><span>R offset: <mark>(7, 69)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/self_portrait.jpg" alt="Colorized self portrait"><figcaption><strong>self portrait</strong><span>G offset: <mark>(29, 78)</mark></span><span>R offset: <mark>(37, 175)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/siren.jpg" alt="Colorized siren"><figcaption><strong>siren</strong><span>G offset: <mark>(-5, 49)</mark></span><span>R offset: <mark>(-24, 96)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/three_generations.jpg" alt="Colorized three generations"><figcaption><strong>three generations</strong><span>G offset: <mark>(14, 51)</mark></span><span>R offset: <mark>(12, 110)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/wharf.jpg" alt="Colorized wharf"><figcaption><strong>wharf</strong><span>G offset: <mark>(-7, 15)</mark></span><span>R offset: <mark>(-15, 82)</mark></span></figcaption></figure>
       </div>
     </section>
     <section class="part part3">
-      <img src="../pics/part3.svg" class="part-drawing-emir" alt="Part 3">
+      <img src="./pics/part3.svg" class="part-drawing-emir" alt="Part 3">
       <div class="explanation">
         <p>Raw NCC works when matching objects with similar brightness. BUT Emir's blue robe is bright in one channel and dark in another. The same region has very different values, so raw NCC goes wrong.</p>
         <p>I use Sobel to detect brightness changes, then combine them as sqrt(Gx²+Gy²). NCC compares where boundaries occur instead of brightness itself, so the objects align better.</p>
       </div>
       <div class="emir-row">
-        <figure><img src="../new_img/emir1.jpg" alt="Misaligned Emir using raw NCC"><figcaption><b>before</b> · raw pixel NCC<br><span>G offset: (24, 48)</span><br><span>R offset: (-86, -205)</span></figcaption></figure>
+        <figure><img src="./new_img/emir1.jpg" alt="Misaligned Emir using raw NCC"><figcaption><b>before</b> · raw pixel NCC<br><span>G offset: (24, 48)</span><br><span>R offset: (-86, -205)</span></figcaption></figure>
         <div class="arrow">→<span>Sobel edges</span></div>
-        <figure><img src="../new_img/emir.jpg" alt="Aligned Emir using Sobel edge NCC"><figcaption><b>after</b> · edge-based NCC<br><span>G offset: (24, 49)</span><br><span>R offset: (41, 107)</span></figcaption></figure>
+        <figure><img src="./new_img/emir.jpg" alt="Aligned Emir using Sobel edge NCC"><figcaption><b>after</b> · edge-based NCC<br><span>G offset: (24, 49)</span><br><span>R offset: (41, 107)</span></figcaption></figure>
       </div>
     </section>
     <section class="part part4">
-      <img src="../pics/part4.svg" class="part-drawing" alt="Part 4">
+      <img src="./pics/part4.svg" class="part-drawing" alt="Part 4">
       <div class="explanation">
         <p>To test further, I selected four additional glass-plate scans from the <a href="https://www.loc.gov/collections/prokudin-gorskii/?st=grid">Library of Congress Prokudin-Gorskii collection</a>.</p>
         <p>I applied the same BGR splitting, central crop, NCC metric, and coarse-to-fine image pyramid without tuning the method separately for each image. IT WORKED!!</p>
       </div>
       <div class="photo-grid discovery-grid">
-        <figure class="result-card"><img src="../new_img/Etruscan.jpg" alt="Colorized Etruscan exhibit"><figcaption><strong>Etruscan</strong><span>G offset: <mark>(-2, 24)</mark></span><span>R offset: <mark>(-2, 113)</mark></span></figcaption></figure>
-        <figure class="result-card"><img src="../new_img/Isfandiyar.jpg" alt="Colorized portrait of Isfandiyar"><figcaption><strong>Isfandiyar</strong><span>G offset: <mark>(8, 39)</mark></span><span>R offset: <mark>(-8, 94)</mark></span></figcaption></figure>
-        <figure class="result-card"><img src="../new_img/Peonies.jpg" alt="Colorized peonies"><figcaption><strong>Peonies</strong><span>G offset: <mark>(21, 76)</mark></span><span>R offset: <mark>(30, 156)</mark></span></figcaption></figure>
-        <figure class="result-card"><img src="../new_img/Display.jpg" alt="Colorized museum display"><figcaption><strong>Display</strong><span>G offset: <mark>(-15, 79)</mark></span><span>R offset: <mark>(-43, 171)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/Etruscan.jpg" alt="Colorized Etruscan exhibit"><figcaption><strong>Etruscan</strong><span>G offset: <mark>(-2, 24)</mark></span><span>R offset: <mark>(-2, 113)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/Isfandiyar.jpg" alt="Colorized portrait of Isfandiyar"><figcaption><strong>Isfandiyar</strong><span>G offset: <mark>(8, 39)</mark></span><span>R offset: <mark>(-8, 94)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/Peonies.jpg" alt="Colorized peonies"><figcaption><strong>Peonies</strong><span>G offset: <mark>(21, 76)</mark></span><span>R offset: <mark>(30, 156)</mark></span></figcaption></figure>
+        <figure class="result-card"><img src="./new_img/Display.jpg" alt="Colorized museum display"><figcaption><strong>Display</strong><span>G offset: <mark>(-15, 79)</mark></span><span>R offset: <mark>(-43, 171)</mark></span></figcaption></figure>
       </div>
     </section>
   </main>
