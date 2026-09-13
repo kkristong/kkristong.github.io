@@ -295,7 +295,8 @@ dialog button {
   .result-card figcaption strong { font-size: 14px; }
   .result-card figcaption span { font-size: 11px; }
 
-  .high-grid .result-card:nth-last-child(2) { grid-column: auto; }
+  .high-grid .result-card:nth-last-child(2) { grid-column: 2; }
+  .high-grid .result-card:last-child { grid-column: 3; }
 
   .refine-graphic {
     width: 58%;
