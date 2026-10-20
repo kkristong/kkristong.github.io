@@ -8,3 +8,6 @@ tmp/
 *.ipynb
 *.pt
 *.ckpt
+# Local-only printing helpers must never be published.
+/print.html
+/print.css
