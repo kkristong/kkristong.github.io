@@ -1,0 +1,10 @@
+.DS_Store
+.env
+.env.*
+.pvnc/
+.vscode/
+__pycache__/
+tmp/
+*.ipynb
+*.pt
+*.ckpt
