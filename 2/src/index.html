@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fun with Filters and Frequencies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&amp;family=Gaegu:wght@400;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <img src="../titles/title.svg" alt="Fun with Filters and Frequencies — CS180 Project 2" class="hero-title">
+  </header>
+
+  <main>
+    <section class="chapter" id="part-1">
+      <article class="part" id="part-1-1">
+        <h2>part 1.1 · convolutions from scratch</h2>
+        <div class="copy">
+          <p><b>1. Four loops:</b> I used two loops to visit every output pixel and two additional loops to visit every entry of the flipped kernel.</p>
+          <p><b>2. Two loops:</b> I kept the two loops over the output pixels, but replaced the inner kernel loops with a NumPy window multiplication and sum. </p>
+          <p><b>3. SciPy and boundaries:</b> My implementations use explicit zero padding and preserve the input dimensions.</p>
+          <p class="formula convolution-formula">(I ∗ K)[i, j] = Σ<sub>u</sub> Σ<sub>v</sub> I<sub>pad</sub>[i + u, j + v] K<sub>flip</sub>[u, v]</p>
+        </div>
+
+        <div class="gallery grid-4">
+          <figure><img src="../pics/selfie.jpg" alt="Original selfie"><figcaption>original selfie</figcaption></figure>
+          <figure><img src="../result/selfie_box.png" alt="Selfie after box filtering"><figcaption>9×9 box filter</figcaption></figure>
+          <figure><img src="../result/selfie_dx.png" alt="Selfie x derivative"><figcaption>finite difference · x</figcaption></figure>
+          <figure><img src="../result/selfie_dy.png" alt="Selfie y derivative"><figcaption>finite difference · y</figcaption></figure>
+        </div>
+
+        <div class="code-grid">
+        <details class="code-card">
+          <summary>four_loops</summary>
+          <pre><code>def convolve_four_loops(image, kernel):
+    kh, kw = kernel.shape
+    h, w = image.shape
+    output = np.zeros((h, w), dtype=float)
+    kernel = np.flip(kernel)
+    pad_h, pad_w = kh // 2, kw // 2
+    padded = np.zeros((h + 2*pad_h, w + 2*pad_w))
+    padded[pad_h:pad_h+h, pad_w:pad_w+w] = image
+
+    for i in range(h):
+        for j in range(w):
+            for p in range(kh):
+                for q in range(kw):
+                    output[i, j] += padded[i+p, j+q] * kernel[p, q]
+    return output</code></pre>
+        </details>
+
+        <details class="code-card">
+          <summary>two_loops</summary>
+          <pre><code>def convolve_two_loops(image, kernel):
+    kh, kw = kernel.shape
+    h, w = image.shape
+    output = np.zeros((h, w), dtype=float)
+    kernel = np.flip(kernel)
+    pad_h, pad_w = kh // 2, kw // 2
+    padded = np.zeros((h + 2*pad_h, w + 2*pad_w))
+    padded[pad_h:pad_h+h, pad_w:pad_w+w] = image
+
+    for i in range(h):
+        for j in range(w):
+            window = padded[i:i+kh, j:j+kw]
+            output[i, j] = np.sum(window * kernel)
+    return output</code></pre>
+        </details>
+
+        <details class="code-card">
+          <summary>scipy · convolve2d</summary>
+          <pre><code>from scipy.signal import convolve2d
+
+output = convolve2d(
+    image,
+    kernel,
+    mode="same",
+    boundary="fill",
+    fillvalue=0,
+)</code></pre>
+        </details>
+        </div>
+
+        <div class="runtime-block">
+          <h3>runtime comparison</h3>
+          <table>
+            <thead>
+              <tr><th>implementation</th><th>time</th><th>relative to SciPy</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>four loops</td><td>0.987 s</td><td>253× slower</td></tr>
+              <tr><td>two loops</td><td>0.094 s</td><td>24× slower</td></tr>
+              <tr><td>SciPy convolve2d</td><td>0.0039 s</td><td>baseline</td></tr>
+            </tbody>
+          </table>
+          <p class="runtime-comment">The NumPy window operation makes the two-loop version about 10.5× faster than four explicit loops, but SciPy remains much faster because its convolution is implemented with optimized compiled routines. Both custom results match SciPy with np.allclose.</p>
+          <p class="runtime-note">Measured on a 256×256 version of my selfie using the 9×9 box filter.</p>
+        </div>
+      </article>
+
+      <article class="part" id="part-1-2">
+        <h2>part 1.2 · finite difference operator</h2>
+        <div class="copy">
+          <p>I convolved the cameraman image with D<sub>x</sub> = [1, 0, −1] and its vertical transpose D<sub>y</sub>, then computed the gradient magnitude as sqrt(dx² + dy²). I binarized the magnitude image using a threshold of <strong>0.27</strong>.</p>
+          <p>A lower threshold preserved more weak edges, but also introduced responses from the grass and image texture; a higher threshold removed that noise, but began to erase real contours.</p>
+        </div>
+        <div class="gallery grid-4 operator-gallery">
+          <figure><img src="../pics/cameraman.png" alt="Original cameraman"><figcaption>original</figcaption></figure>
+          <figure><img src="../result/cameraman_dx.png" alt="Cameraman derivative x"><figcaption>partial x</figcaption></figure>
+          <figure><img src="../result/cameraman_dy.png" alt="Cameraman derivative y"><figcaption>partial y</figcaption></figure>
+          <figure><img src="../result/cameraman_I.png" alt="Gradient magnitude"><figcaption>gradient magnitude</figcaption></figure>
+        </div>
+        <div class="gallery grid-3 threshold-gallery">
+          <figure><img src="../result/cameraman_edge_010.png" alt="Binarized edge image at threshold 0.10"><figcaption>threshold · 0.10</figcaption></figure>
+          <figure class="chosen-threshold"><img src="../result/cameraman_edge.png" alt="Binarized edge image at threshold 0.27"><figcaption>★ threshold · 0.27</figcaption></figure>
+          <figure><img src="../result/cameraman_edge_035.png" alt="Binarized edge image at threshold 0.35"><figcaption>threshold · 0.35</figcaption></figure>
+        </div>
+      </article>
+
+      <article class="part" id="part-1-3">
+        <h2>part 1.3 · derivative of gaussian</h2>
+        <div class="copy">
+          <p>I used a 9×9 Gaussian kernel with σ=2 to reduce high-frequency noise before taking derivatives. Compared with Part 1.2, the resulting edges are smoother, thicker, and more continuous, while much of the grass and texture response disappears.</p>
+          <p>I tested two equivalent pipelines: first blurring the image and then applying D<sub>x</sub> and D<sub>y</sub>, or first convolving the Gaussian with each finite-difference filter to create DoG filters and then filtering the image once.</p>
+        </div>
+
+        <h3>gaussian → finite difference</h3>
+        <div class="gallery grid-5 compact">
+          <figure><img src="../result/cameraman_gaussian.png" alt="Gaussian blurred cameraman"><figcaption>gaussian blur</figcaption></figure>
+          <figure><img src="../result/blur_then_dx.png" alt="X derivative after Gaussian blur"><figcaption>partial x</figcaption></figure>
+          <figure><img src="../result/blur_then_dy.png" alt="Y derivative after Gaussian blur"><figcaption>partial y</figcaption></figure>
+          <figure><img src="../result/blur_then_magnitude.png" alt="Gradient magnitude after Gaussian blur"><figcaption>magnitude</figcaption></figure>
+          <figure><img src="../result/blur_then_edge.png" alt="Binary edges after Gaussian blur"><figcaption>binary · t=.10</figcaption></figure>
+        </div>
+
+        <h3>derivative of gaussian filters</h3>
+        <div class="gallery kernel-pair">
+          <figure><img src="../result/dog_x_kernel.png" alt="Derivative of Gaussian x kernel"><figcaption>DoG x kernel</figcaption></figure>
+          <figure><img src="../result/dog_y_kernel.png" alt="Derivative of Gaussian y kernel"><figcaption>DoG y kernel</figcaption></figure>
+        </div>
+
+        <h3>single convolution with DoG</h3>
+        <div class="gallery grid-4">
+          <figure><img src="../result/dog_once_dx.png" alt="Single-convolution DoG x response"><figcaption>DoG · x</figcaption></figure>
+          <figure><img src="../result/dog_once_dy.png" alt="Single-convolution DoG y response"><figcaption>DoG · y</figcaption></figure>
+          <figure><img src="../result/dog_once_magnitude.png" alt="Single-convolution DoG magnitude"><figcaption>DoG magnitude</figcaption></figure>
+          <figure><img src="../result/dog_once_edge.png" alt="Single-convolution DoG binary edge"><figcaption>binary · t=.10</figcaption></figure>
+        </div>
+
+        <h3>verification</h3>
+        <div class="gallery grid-3 comparison-row">
+          <figure><img src="../result/blur_then_magnitude.png" alt="Blur then differentiate magnitude"><figcaption>blur → derivative</figcaption></figure>
+          <figure><img src="../result/dog_once_magnitude.png" alt="One-pass DoG magnitude"><figcaption>one-pass DoG</figcaption></figure>
+          <figure><img src="../result/dog_difference.png" alt="Absolute difference between the two methods"><figcaption>absolute difference</figcaption></figure>
+        </div>
+        <p class="observation">Away from the padded boundary, the two magnitude images are numerically identical. The visible difference is confined to the outer border because applying two “same” convolutions introduces padding twice, while the combined DoG method pads only once.</p>
+      </article>
+    </section>
+
+    <section class="chapter" id="part-2">
+      <article class="part" id="part-2-1">
+        <h2>part 2.1 · image sharpening</h2>
+        <div class="copy">
+          <p>The Gaussian blur isolates low frequencies. Subtracting it from the original gives the high-frequency detail, which is added back with the unsharp-mask filter. These examples use a 9×9 Gaussian with σ=2 and α=1.</p>
+          <p class="formula">I<sub>sharp</sub> = I + α(I − G ∗ I) = (1 + α)I − α(G ∗ I)</p>
+          <p>Here, G ∗ I is the low-frequency blurred image, I − G ∗ I is the high-frequency detail, and α controls how much of that detail is added back.</p>
+        </div>
+        <h3>taj mahal</h3>
+        <div class="gallery grid-4">
+          <figure><img src="../result/taj_original.png" alt="Original Taj Mahal"><figcaption>original</figcaption></figure>
+          <figure><img src="../result/taj_blurred.png" alt="Blurred Taj Mahal"><figcaption>low frequencies</figcaption></figure>
+          <figure><img src="../result/taj_detail.png" alt="Taj Mahal high frequencies"><figcaption>high frequencies</figcaption></figure>
+          <figure><img src="../result/taj_sharpened.png" alt="Sharpened Taj Mahal"><figcaption>sharpened</figcaption></figure>
+        </div>
+        <h3>sea</h3>
+        <div class="gallery grid-4">
+          <figure><img src="../result/sea_original.png" alt="Original sea"><figcaption>original</figcaption></figure>
+          <figure><img src="../result/sea_blurred.png" alt="Low-frequency sea"><figcaption>low frequencies</figcaption></figure>
+          <figure><img src="../result/sea_detail.png" alt="Sea high-frequency detail"><figcaption>high frequencies</figcaption></figure>
+          <figure><img src="../result/sea_sharpened.png" alt="Sharpened sea"><figcaption>sharpened</figcaption></figure>
+        </div>
+        <h3>sea · varying sharpening amount</h3>
+        <div class="gallery grid-4 alpha-gallery">
+          <figure><img src="../result/sea_alpha_05.png" alt="Sea sharpened with alpha 0.5"><figcaption>α = 0.5</figcaption></figure>
+          <figure><img src="../result/sea_alpha_10.png" alt="Sea sharpened with alpha 1"><figcaption>α = 1</figcaption></figure>
+          <figure><img src="../result/sea_alpha_20.png" alt="Sea sharpened with alpha 2"><figcaption>α = 2</figcaption></figure>
+          <figure><img src="../result/sea_alpha_30.png" alt="Sea sharpened with alpha 3"><figcaption>α = 3</figcaption></figure>
+        </div>
+        <p class="observation">As α increases, the wave boundaries and fine water texture become more pronounced. Moderate sharpening improves clarity, while α=3 begins to exaggerate contrast and produces harsher edge artifacts.</p>
+        <h3>flower · blur, then resharpen</h3>
+        <div class="gallery grid-4">
+          <figure><img src="../result/flower_original.png" alt="Original sharp flower"><figcaption>sharp original</figcaption></figure>
+          <figure><img src="../result/flower_blurred.png" alt="Blurred flower"><figcaption>blurred input</figcaption></figure>
+          <figure><img src="../result/flower_detail.png" alt="Recovered flower detail"><figcaption>recovered detail</figcaption></figure>
+          <figure><img src="../result/flower_sharpened.png" alt="Resharpened flower"><figcaption>resharpened</figcaption></figure>
+        </div>
+        <p class="observation">Sharpening makes the blurred flower look crisper, but it cannot recreate high-frequency information destroyed by the blur, so the resharpened result is not identical to the original.</p>
+      </article>
+
+      <article class="part" id="part-2-2">
+        <h2>part 2.2 · hybrid images</h2>
+        <div class="copy">
+          <p>A hybrid image adds the high-frequency component of one aligned image to the low-frequency component of another. Up close, fine detail dominates; from farther away, only the smooth low-frequency structure remains.</p>
+        </div>
+
+        <div class="hybrid-set">
+          <figure><img src="../hybrid_starter_code/DerekPicture.jpg" alt="Derek input"><figcaption>Derek</figcaption></figure>
+          <span aria-hidden="true">＋</span>
+          <figure><img src="../hybrid_starter_code/nutmeg.jpg" alt="Nutmeg input"><figcaption>Nutmeg</figcaption></figure>
+          <span aria-hidden="true">＝</span>
+          <figure><img src="../result/derek_nutmeg.png" alt="Derek and Nutmeg hybrid"><figcaption>Derek × Nutmeg</figcaption></figure>
+        </div>
+
+        <h3>favorite result</h3>
+        <p class="process-label">original inputs</p>
+        <div class="hybrid-set">
+          <figure><img src="../pics/yirenng.jpg" alt="Original Yiren input"><figcaption>Yiren · high-frequency input</figcaption></figure>
+          <span aria-hidden="true">＋</span>
+          <figure><img src="../pics/efros.jpg" alt="Original Efros input"><figcaption>Efros · low-frequency input</figcaption></figure>
+          <span aria-hidden="true">＝</span>
+          <figure><img src="../result/efros_yiren.png" alt="Efros and Yiren hybrid"><figcaption>final hybrid</figcaption></figure>
+        </div>
+
+        <p class="process-label">aligned inputs</p>
+        <div class="gallery grid-2 compact alignment-row">
+          <figure><img src="../result/hybrid/process/yiren_aligned.png" alt="Yiren aligned by the eyes"><figcaption>aligned high-frequency<br>input</figcaption></figure>
+          <figure><img src="../result/hybrid/process/efros_aligned.png" alt="Efros aligned by the eyes"><figcaption>aligned low-frequency<br>input</figcaption></figure>
+        </div>
+
+        <p class="process-label">filtered components</p>
+        <div class="hybrid-set process-equation">
+          <figure><img src="../result/hybrid/process/yiren_highpass_display.png" alt="High-pass filtered Yiren"><figcaption>high-pass · σ=15</figcaption></figure>
+          <span aria-hidden="true">＋</span>
+          <figure><img src="../result/hybrid/process/efros_lowpass.png" alt="Low-pass filtered Efros"><figcaption>low-pass · σ=3</figcaption></figure>
+          <span aria-hidden="true">＝</span>
+          <figure><img src="../result/efros_yiren.png" alt="Final Efros and Yiren hybrid"><figcaption>final hybrid</figcaption></figure>
+        </div>
+
+        <p class="observation cutoff-note">I used σ=15 for the high-pass image and σ=3 for the low-pass image. This keeps Yiren's fine facial detail visible up close while preserving Efros's broad face and glasses at a distance. Nearby cutoff choices either left the two faces competing at the same scale or removed too much recognizable structure.</p>
+
+        <h3 class="fft-title">frequency analysis</h3>
+        <div class="gallery grid-5 compact fft-row">
+          <figure><img src="../result/fft/yirenng_fft.png" alt="Yiren Fourier transform"><figcaption>input 1 FFT</figcaption></figure>
+          <figure><img src="../result/fft/efros_fft.png" alt="Efros Fourier transform"><figcaption>input 2 FFT</figcaption></figure>
+          <figure><img src="../result/fft/high_im_fft.png" alt="High-pass Fourier transform"><figcaption>high-pass FFT · σ=15</figcaption></figure>
+          <figure><img src="../result/fft/low_im_fft.png" alt="Low-pass Fourier transform"><figcaption>low-pass FFT · σ=3</figcaption></figure>
+          <figure><img src="../result/fft/hybrid_fft.png" alt="Hybrid Fourier transform"><figcaption>hybrid FFT</figcaption></figure>
+        </div>
+
+        <h3>another custom pair</h3>
+        <div class="hybrid-set">
+          <figure><img src="../pics/winferd.jpg" alt="Winferd input"><figcaption>Winferd</figcaption></figure>
+          <span aria-hidden="true">＋</span>
+          <figure><img src="../pics/anime.jpg" alt="Anime input"><figcaption>anime character</figcaption></figure>
+          <span aria-hidden="true">＝</span>
+          <figure><img src="../result/winferd_anime.png" alt="Winferd anime hybrid"><figcaption>final hybrid</figcaption></figure>
+        </div>
+      </article>
+
+      <article class="part" id="part-2-3">
+        <h2>part 2.3 · gaussian & laplacian stacks</h2>
+        <div class="copy">
+          <p>I built six-level Gaussian and Laplacian stacks without downsampling. Each Gaussian level applies progressively stronger smoothing; subtracting adjacent Gaussian levels isolates a frequency band. Summing the Laplacian levels reconstructs the image.</p>
+        </div>
+        <div class="gallery source-pair">
+          <figure><img src="../spline/apple.jpeg" alt="Apple source"><figcaption>apple</figcaption></figure>
+          <figure><img src="../spline/orange.jpeg" alt="Orange source"><figcaption>orange</figcaption></figure>
+        </div>
+        <figure class="wide-figure apple-orange-stacks"><img src="../result/lap.png" alt="Apple and orange Gaussian and Laplacian stacks"><figcaption>six-level Gaussian and Laplacian stacks</figcaption></figure>
+      </article>
+
+      <article class="part" id="part-2-4">
+        <h2>part 2.4 · multiresolution blending</h2>
+        <div class="copy">
+          <p>I build a Gaussian stack for the mask and Laplacian stacks for both inputs. At every level, the smoothed mask selects a contribution from each image; summing the blended frequency bands creates a seam that changes gradually across scales.</p>
+          <p class="formula blend-formula">L<sub>k</sub><sup>blend</sup> = G<sub>k</sub><sup>M</sup> ⊙ L<sub>k</sub><sup>A</sup> + (1 − G<sub>k</sub><sup>M</sup>) ⊙ L<sub>k</sub><sup>B</sup></p>
+          <p class="formula blend-formula">I<sub>blend</sub> = Σ<sub>k</sub> L<sub>k</sub><sup>blend</sup></p>
+          <p class="formula-note">Here, G<sup>M</sup> is the Gaussian stack of the mask, while L<sup>A</sup> and L<sup>B</sup> are the Laplacian stacks of the two source images.</p>
+        </div>
+        <div class="hybrid-set blend-equation oraple-equation">
+          <figure><img src="../spline/apple.jpeg" alt="Apple source"><figcaption>apple</figcaption></figure>
+          <span aria-hidden="true">＋</span>
+          <figure><img src="../spline/orange.jpeg" alt="Orange source"><figcaption>orange</figcaption></figure>
+          <span aria-hidden="true">＝</span>
+          <figure><img src="../result/oraple.png" alt="Apple and orange multiresolution blend"><figcaption>oraple</figcaption></figure>
+        </div>
+        <figure class="wide-figure figure-342"><img src="../result/figure_342_labeled.png" alt="Figure 3.42 panels a through l for the Oraple"><figcaption>Figure 3.42 recreation · panels (a)–(l)</figcaption></figure>
+
+        <h3>irregular mask · moon coffee</h3>
+        <div class="hybrid-set blend-equation mask-equation moon-overview">
+          <figure><img src="../pics/blend/moon_source.jpg" alt="Moon source"><figcaption>moon source</figcaption></figure>
+          <span aria-hidden="true">＋</span>
+          <figure><img src="../pics/blend/coffee_source.jpg" alt="Coffee source"><figcaption>coffee source</figcaption></figure>
+          <span aria-hidden="true">＋</span>
+          <figure><img src="../result/hybrid/moon_mask.png" alt="Circular irregular mask used for the moon and coffee blend"><figcaption>irregular mask</figcaption></figure>
+          <span aria-hidden="true">＝</span>
+          <figure><img src="../result/moon_coffee.png" alt="Moon coffee blended result"><figcaption>moon + coffee</figcaption></figure>
+        </div>
+        <figure class="wide-figure moon-process"><img src="../result/hybrid/moon_process_labeled.png" alt="Moon and coffee multiresolution blending contributions"><figcaption>moon + coffee contributions across scales</figcaption></figure>
+        <figure class="wide-figure moon-stacks"><img src="../result/hybrid/moon_stacks_labeled.png" alt="Moon and coffee Gaussian and Laplacian stacks"><figcaption>moon + coffee Gaussian and Laplacian stacks</figcaption></figure>
+        <p class="observation">I chose a circular mask that follows the inside of the coffee cup. The result blends cleanly around the cup.</p>
+
+        <h3>custom blend · winferd + anime</h3>
+        <div class="hybrid-set blend-equation mask-equation">
+          <figure><img src="../pics/winferd.jpg" alt="Winferd source"><figcaption>Winferd</figcaption></figure>
+          <span aria-hidden="true">＋</span>
+          <figure><img src="../pics/anime.jpg" alt="Anime source"><figcaption>anime character</figcaption></figure>
+          <span aria-hidden="true">＋</span>
+          <figure><img src="../pics/blend/anime_mask.png" alt="Irregular face mask used for the Winferd and anime blend"><figcaption>irregular face mask</figcaption></figure>
+          <span aria-hidden="true">＝</span>
+          <figure><img src="../result/anime_friend.png" alt="Winferd blended into the anime character"><figcaption>Winferd × anime</figcaption></figure>
+        </div>
+        <p class="observation">I used an irregular mask that follows Winferd(my friend)'s facial region. The low-frequency levels create a gradual transition into the animated head. HOPE HE WOULD ENJOY LOL</p>
+      </article>
+    </section>
+
+    <section class="takeaway">
+      <h2>SOMETHING I LEARNED</h2>
+      <p>Blurring, sharpening, hybrid images, and multiresolution blending are different uses of the same frequency idea. Once an image is separated into smooth structure and fine detail, those bands can be measured, emphasized, recombined, or blended independently.</p>
+    </section>
+  </main>
+
+  <dialog id="lightbox">
+    <button type="button" aria-label="Close image">×</button>
+    <img alt="Expanded project result">
+  </dialog>
+  <script src="script.js"></script>
+</body>
+</html>
