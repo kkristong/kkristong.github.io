@@ -590,6 +590,7 @@ mark { padding: 0 .2em; background: var(--yellow); color: inherit; }
 @media print {
   @page { size: portrait; margin: 12mm; }
   body { background: #fff; font-size: 13pt; }
+  main { overflow: visible; }
   .hero { margin-top: 0; min-height: 0; padding: 18mm 0 24mm; break-after: page; }
   .hero-title { width: 93.75mm; max-height: 112.5mm; }
   .lightbox { display: none !important; }
