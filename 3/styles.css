@@ -609,8 +609,42 @@ mark { padding: 0 .2em; background: var(--yellow); color: inherit; }
   .result.wide { margin-bottom: 8mm; }
   img { max-height: 205mm; }
   mark { background: transparent; text-decoration: underline; }
-  .interactive-panel, .result-archive > summary { display: none !important; }
+  /* Print the current interactive view, including its complete control UI. */
+  .interactive-panel {
+    display: block !important;
+    visibility: visible !important;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto 8mm;
+    padding: 5mm;
+    break-inside: avoid;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .interactive-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6mm;
+  }
+  .interactive-card { break-inside: avoid; }
+  .interactive-panel[aria-label="Explore hybrid images at different sizes"] { break-inside: auto; }
+  .interactive-panel img, .interactive-panel canvas { max-height: none; }
+  .demo-button, .demo-select, .demo-range, .comparison-divider, .compare-label {
+    visibility: visible !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .demo-range, .demo-select { appearance: auto; -webkit-appearance: auto; }
+  .button-group { break-inside: avoid; }
+  .result-archive > summary {
+    display: list-item !important;
+    visibility: visible !important;
+    margin: 3mm auto;
+    break-after: avoid;
+  }
   .result-archive { width: 100%; margin: 0; }
   .result-archive::details-content { display: block !important; content-visibility: visible !important; }
-  .archive-content { display: block !important; padding-top: 0; }
+  .archive-content { display: block !important; padding-top: 4mm; }
+  .anagram-print-results, .sampling-print-results { display: grid !important; }
+  .sampling-print-results.result { display: block !important; }
 }
