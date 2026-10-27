@@ -160,12 +160,31 @@ td:nth-child(2) { white-space: nowrap; color: var(--blue-gray); }
 .interaction-title { margin: 0 0 22px; font: 400 28px/1.2 "Darumadrop One", sans-serif; text-align: center; }
 .demo-hint { margin: 18px auto; color: var(--muted); font-size: 21px; line-height: 1.25; text-align: center; }
 .demo-readout { margin: 18px 0 0; color: var(--blue-gray); text-align: center; font-size: 22px; }
-.demo-controls, .point-toolbar { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 auto 22px; }
+.demo-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 auto 22px; }
 .demo-button { min-height: 44px; padding: 8px 17px; border: 1px solid #d0dce8; border-radius: 10px; background: #f7f9fb; color: var(--ink); font: 700 23px/1.2 "Gaegu", sans-serif; cursor: pointer; }
 .demo-button:hover { border-color: #819ab4; }
 .demo-button[aria-pressed="true"] { color: var(--blue-gray); background: var(--soft-blue); border-color: #819fbe; }
 .point-pair, .inspection-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-bottom: 8px; }
-.point-toolbar { margin: 32px auto 18px; max-width: 650px; gap: 8px; }
+.point-toolbar {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin: 32px auto 18px;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.point-toolbar .demo-button {
+  width: 38px;
+  min-height: 38px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 20px;
+}
 .point-view { min-width: 0; margin: 0; text-align: center; }
 .point-view figcaption { font: 400 22px/1.2 "Gaegu", sans-serif; }
 .point-stage { position: relative; }
@@ -238,7 +257,8 @@ td:nth-child(2) { white-space: nowrap; color: var(--blue-gray); }
   .interaction-title { font-size: 26px; }
   .demo-button { font-size: 21px; padding-inline: 12px; }
   .point-pair, .inspection-pair { grid-template-columns: 1fr; gap: 26px; }
-  .point-toolbar .demo-button { width: 44px; }
+  .point-toolbar { gap: 4px; }
+  .point-toolbar .demo-button { width: 30px; min-height: 34px; font-size: 17px; }
   .demo-hint, .result-archive > summary { font-size: 20px; }
   .rectification-view img { height: 320px; }
   .wipe-label { top: 7px; padding: 4px 6px; font-size: 17px; }
