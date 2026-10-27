@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CS180 Project 4A — Image Warping and Mosaicing, by Kris Tong.">
+  <title>Image Warping and Mosaicing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&amp;family=Gaegu:wght@400;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=7">
+  <script src="script.js?v=11" defer></script>
+</head>
+<body>
+  <header class="hero">
+    <h1 class="sr-only">Image Warping and Mosaicing</h1>
+    <img class="hero-title" src="../pics/title/Group%2010.png" width="6104" height="4177" alt="Image Warping and Mosaicing — hand-drawn project title">
+  </header>
+
+  <main>
+    <section class="part" id="a1" aria-labelledby="a1-heading">
+      <h2 id="a1-heading">A.1 · shoot the pictures</h2>
+      <div class="copy">
+        <p>I used three overlapping image pairs: a row of storefronts, a street intersection, and an indoor atrium. Each pair contains shared architectural details that can be matched across the two views.</p>
+        <p>In the following sections, the first image is warped into the coordinate system of the second image, which stays as the reference.</p>
+      </div>
+
+      <div class="source-set" id="sources-scene1">
+        <h3>scene 1 · storefronts</h3>
+        <div class="gallery two-up source-pair">
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene1_source_left.png" width="640" height="480" alt="Scene 1 first source photograph of the storefronts"><figcaption>image 3</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene1_source_right.png" width="640" height="480" alt="Scene 1 second source photograph, used as the reference"><figcaption>image 4 · reference</figcaption></figure>
+        </div>
+      </div>
+      <div class="source-set" id="sources-scene2">
+        <h3>scene 2 · street intersection</h3>
+        <div class="gallery two-up source-pair">
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_left.png" width="1280" height="960" alt="Scene 2 first source photograph, looking along the intersection"><figcaption>image 1</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_right.png" width="1280" height="960" alt="Scene 2 second source photograph, used as the reference"><figcaption>image 2 · reference</figcaption></figure>
+        </div>
+      </div>
+      <div class="source-set" id="sources-scene3">
+        <h3>scene 3 · indoor atrium</h3>
+        <div class="gallery two-up source-pair">
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene3_source_left.png" width="1280" height="960" alt="Scene 3 first source photograph of the atrium"><figcaption>image 5</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene3_source_right.png" width="1280" height="960" alt="Scene 3 second source photograph of the atrium"><figcaption>image 6 · reference</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="part" id="a2" aria-labelledby="a2-heading">
+      <h2 id="a2-heading">A.2 · recover homographies</h2>
+      <div class="copy">
+        <p>I selected 12 pairs of corresponding points for each scene. My <code>computeH(im1_pts, im2_pts)</code> function fixes h<sub>33</sub> = 1 and solves for the remaining eight parameters using <code>np.linalg.lstsq</code>.</p>
+        <p>For each match (x, y) → (u, v), I rearrange the two projective equations into linear equations:</p>
+      </div>
+      <div class="equations" aria-label="Two linear equations for each point correspondence">
+        <p>x h<sub>11</sub> + y h<sub>12</sub> + h<sub>13</sub> − ux h<sub>31</sub> − uy h<sub>32</sub> = u</p>
+        <p>x h<sub>21</sub> + y h<sub>22</sub> + h<sub>23</sub> − vx h<sub>31</sub> − vy h<sub>32</sub> = v</p>
+      </div>
+      <div class="copy">
+        <p>Stacking the matches gives A h = b, with A of size 24 × 8. This overdetermined system uses more than the minimum four matches, so the fit is less dependent on any single clicked point. The matrices below map the first view to the reference view.</p>
+      </div>
+
+      <article class="homography-case" aria-labelledby="h-scene1">
+        <h3 id="h-scene1">scene 1</h3>
+        <div class="homography-layout">
+          <div class="gallery two-up correspondence-pair">
+            <figure class="result"><img src="../pics/part%20A%20output/A2_scene1_correspondences_left.png" width="640" height="480" alt="Twelve numbered matching points on Scene 1 image 3"></figure>
+            <figure class="result"><img src="../pics/part%20A%20output/A2_scene1_correspondences_right.png" width="640" height="480" alt="The same twelve numbered matching points on Scene 1 reference image 4"></figure>
+          </div>
+          <div class="matrix-result">
+            <p class="matrix-label">H<sub>1</sub> =</p>
+            <div class="matrix" role="math" aria-label="Recovered Scene 1 homography">
+              <span>2.849990</span><span>−0.09312449</span><span>−905.4851</span>
+              <span>0.7949651</span><span>2.417443</span><span>−460.1626</span>
+              <span>0.002906509</span><span>−9.836168e−6</span><span>1</span>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="homography-case" aria-labelledby="h-scene2">
+        <h3 id="h-scene2">scene 2</h3>
+        <div class="homography-layout">
+          <div class="gallery two-up correspondence-pair">
+            <figure class="result"><img src="../pics/part%20A%20output/A2_scene2_correspondences_left.png" width="1280" height="960" alt="Twelve numbered matching points on Scene 2 image 1"></figure>
+            <figure class="result"><img src="../pics/part%20A%20output/A2_scene2_correspondences_right.png" width="1280" height="960" alt="The same twelve numbered matching points on Scene 2 reference image 2"></figure>
+          </div>
+          <div class="matrix-result">
+            <p class="matrix-label">H<sub>2</sub> =</p>
+            <div class="matrix" role="math" aria-label="Recovered Scene 2 homography">
+              <span>2.750173</span><span>−0.1712533</span><span>−2117.978</span>
+              <span>0.7690293</span><span>2.279365</span><span>−812.1043</span>
+              <span>0.001430573</span><span>−0.0001249707</span><span>1</span>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="homography-case" aria-labelledby="h-scene3">
+        <h3 id="h-scene3">scene 3</h3>
+        <div class="homography-layout">
+          <div class="gallery two-up correspondence-pair">
+            <figure class="result"><img src="../pics/part%20A%20output/A2_scene3_correspondences_left.png" width="1280" height="960" alt="Twelve numbered matching points on Scene 3 atrium image 5"></figure>
+            <figure class="result"><img src="../pics/part%20A%20output/A2_scene3_correspondences_right.png" width="1280" height="960" alt="The same twelve numbered matching points on Scene 3 reference image 6"></figure>
+          </div>
+          <div class="matrix-result">
+            <p class="matrix-label">H<sub>3</sub> =</p>
+            <div class="matrix" role="math" aria-label="Recovered Scene 3 homography">
+              <span>2.979466</span><span>0.03677888</span><span>−1815.749</span>
+              <span>0.7595861</span><span>2.398422</span><span>−599.3931</span>
+              <span>0.001576386</span><span>−3.527830e−5</span><span>1</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="part" id="a3" aria-labelledby="a3-heading">
+      <h2 id="a3-heading">A.3 · warp the images</h2>
+      <div class="copy">
+        <p>I first transform the four image corners to find the output bounds, including negative coordinates. For every output pixel, I use H<sup>−1</sup> to find its source position. This inverse mapping avoids holes caused by pushing source pixels forward.</p>
+      </div>
+      <p class="formula">p<sub>source</sub> ∝ H<sup>−1</sup> p<sub>target</sub></p>
+      <h3 class="subheading">nearest neighbor vs. bilinear</h3>
+      <div class="copy">
+        <p><code>warpImageNearestNeighbor</code> rounds the source coordinate to the nearest pixel. <code>warpImageBilinear</code> instead interpolates the four surrounding pixels, first horizontally and then vertically. Both methods are implemented directly, without a high-level warping or interpolation routine.</p>
+      </div>
+      <div class="gallery two-up comparison-pair report-card" aria-label="Same source image and homography with two interpolation methods">
+        <figure class="result"><img src="../pics/part%20A%20output/A3_scene1_nearest_neighbor_warp.png" width="1277" height="1164" alt="Scene 1 first view warped using nearest-neighbor sampling"><figcaption>nearest neighbor</figcaption></figure>
+        <figure class="result"><img src="../pics/part%20A%20output/A3_scene1_bilinear_warp.png" width="1277" height="1164" alt="The same Scene 1 first view warped using bilinear interpolation"><figcaption>bilinear</figcaption></figure>
+      </div>
+      <div class="runtime-comparison">
+        <table aria-label="Interpolation runtime comparison">
+          <thead><tr><th scope="col">interpolation</th><th scope="col">time</th><th scope="col">trade-off</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">nearest neighbor</th><td>2.281 s</td><td>one pixel sample; more jagged edges</td></tr>
+            <tr><th scope="row">bilinear</th><td>4.209 s</td><td>four weighted samples; smoother, slightly softer detail</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="copy"><p>On the same street image and homography, bilinear interpolation took about 1.85× as long. Its extra work smooths diagonal edges, while nearest neighbor preserves harder pixel transitions. The difference is easier to see in the rectified text and box edges below.</p></div>
+
+      <article class="report-card rectification-card" id="rectification-crumbl">
+        <h3>rectification · Crumbl box</h3>
+        <div class="copy"><p>I mapped the four corners of the box opening to a 500 × 300 target rectangle. The selected points are ordered around the boundary, and the target corners are (0, 0), (499, 0), (499, 299), and (0, 299).</p><p>The output shows the selected plane from a front-facing perspective. Bilinear sampling makes its diagonal boundaries less stair-stepped than nearest neighbor.</p></div>
+        <div class="gallery two-up rectification-sources">
+          <figure class="result"><img src="../pics/part%20A%20output/A3_crumbl_original.png" width="1280" height="960" alt="Original photograph of the Crumbl box before rectification"><figcaption>original</figcaption></figure>
+          <figure class="result corner-figure"><img src="../pics/part%20A%20output/A3_crumbl_corners.png" width="1280" height="960" alt="Four red numbered corners selected around the photographed Crumbl box opening"><figcaption>selected corners</figcaption></figure>
+        </div>
+        <div class="gallery two-up rectified-pair">
+          <figure class="result"><img src="../pics/part%20A%20output/A3_crumbl_nearest_neighbor.png" width="500" height="300" alt="Crumbl box opening rectified with nearest-neighbor sampling"><figcaption>nearest neighbor</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20A%20output/A3_crumbl_bilinear.png" width="500" height="300" alt="Crumbl box opening rectified with bilinear interpolation"><figcaption>bilinear</figcaption></figure>
+        </div>
+      </article>
+
+      <article class="report-card rectification-card" id="rectification-book">
+        <h3>rectification · book cover</h3>
+        <div class="copy"><p>I repeated the procedure on a book cover, again mapping four approximate cover corners to a 500 × 300 rectangle. This tests the same homography and inverse-sampling code on a different planar object.</p><p>The rectified cover is rectangular in both outputs. Nearest neighbor leaves sharper pixel steps around letters; bilinear interpolation makes those transitions smoother, but does not recover detail absent from the original photo.</p></div>
+        <div class="gallery two-up rectification-sources">
+          <figure class="result"><img src="../pics/part%20A%20output/A3_book_original.png" width="960" height="1280" alt="Original photograph of the Monster book before rectification"><figcaption>original</figcaption></figure>
+          <figure class="result corner-figure"><img src="../pics/part%20A%20output/A3_book_corners.png" width="960" height="1280" alt="Four red numbered corners selected around a Monster book cover"><figcaption>selected corners</figcaption></figure>
+        </div>
+        <div class="gallery two-up rectified-pair">
+          <figure class="result"><img src="../pics/part%20A%20output/A3_book_nearest_neighbor.png" width="500" height="300" alt="Book cover rectified with nearest-neighbor sampling"><figcaption>nearest neighbor</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20A%20output/A3_book_bilinear.png" width="500" height="300" alt="Book cover rectified with bilinear interpolation"><figcaption>bilinear</figcaption></figure>
+        </div>
+      </article>
+    </section>
+
+    <section class="part" id="a4" aria-labelledby="a4-heading">
+      <h2 id="a4-heading">A.4 · blend the images into a mosaic</h2>
+      <div class="copy">
+        <p>I keep the second image as the reference and transform the first image into its coordinate system. The union of both images’ corner bounds defines a common canvas. A translation then shifts all coordinates so the canvas starts at index (0, 0).</p>
+        <p>For blending, I accumulate weighted colors and divide by the actual sum of valid weights. The weight map is warped with the same homography as its image, so pixels outside the source footprint do not darken the result.</p>
+      </div>
+      <p class="formula">I<sub>mosaic</sub> = (w<sub>1</sub> I<sub>1</sub> + w<sub>2</sub> I<sub>2</sub>) / (w<sub>1</sub> + w<sub>2</sub>)</p>
+      <div class="copy"><p>The equal-weight baseline averages overlapping valid pixels. For feathering, <code>makeFeatherWeights</code> uses normalized distance to the closest image edge: small near the boundary and larger toward the center. This gradually changes each image’s contribution instead of creating a hard seam.</p></div>
+
+      <article class="mosaic-case mosaic-card" aria-labelledby="mosaic1-heading">
+        <h3 id="mosaic1-heading">mosaic 1 · storefronts</h3>
+        <div class="gallery two-up mosaic-sources">
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene1_source_left.png" width="640" height="480" alt="First source photograph for the storefront mosaic"><figcaption>image 3</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene1_source_right.png" width="640" height="480" alt="Reference photograph for the storefront mosaic"><figcaption>image 4 · reference</figcaption></figure>
+        </div>
+      </article>
+
+      <article class="mosaic-case mosaic-card" aria-labelledby="mosaic2-heading">
+        <h3 id="mosaic2-heading">mosaic 2 · street intersection</h3>
+        <div class="gallery two-up mosaic-sources">
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_left.png" width="1280" height="960" alt="First source photograph for the street-intersection mosaic"><figcaption>image 1</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_right.png" width="1280" height="960" alt="Reference photograph for the street-intersection mosaic"><figcaption>image 2 · reference</figcaption></figure>
+        </div>
+        <figure class="result mosaic-result"><img src="../pics/part%20A%20output/A4_scene2_feather_mosaic.png" width="3873" height="2375" alt="Final feather-blended mosaic of the street intersection"><figcaption>feather blending</figcaption></figure>
+      </article>
+
+      <article class="mosaic-case mosaic-card" aria-labelledby="mosaic3-heading">
+        <h3 id="mosaic3-heading">mosaic 3 · indoor atrium</h3>
+        <div class="gallery two-up mosaic-sources">
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene3_source_left.png" width="1280" height="960" alt="First source photograph for the indoor-atrium mosaic"><figcaption>image 5</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene3_source_right.png" width="1280" height="960" alt="Reference photograph for the indoor-atrium mosaic"><figcaption>image 6 · reference</figcaption></figure>
+        </div>
+        <figure class="result mosaic-result"><img src="../pics/part%20A%20output/A4_scene3_feather_mosaic.png" width="3123" height="2362" alt="Final feather-blended mosaic of the indoor atrium"><figcaption>feather blending</figcaption></figure>
+      </article>
+      <div class="copy closing-copy"><p>Feathering softens the transition, but it does not correct geometric misalignment or perspective stretching. Those effects remain visible near some outer edges.</p></div>
+    </section>
+  </main>
+
+  <dialog class="lightbox" aria-label="Enlarged project image">
+    <button class="close-lightbox" type="button" aria-label="Close enlarged image">×</button>
+    <img alt="">
+  </dialog>
+</body>
+</html>
