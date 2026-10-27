@@ -164,9 +164,8 @@ td:nth-child(2) { white-space: nowrap; color: var(--blue-gray); }
 .demo-button { min-height: 44px; padding: 8px 17px; border: 1px solid #d0dce8; border-radius: 10px; background: #f7f9fb; color: var(--ink); font: 700 23px/1.2 "Gaegu", sans-serif; cursor: pointer; }
 .demo-button:hover { border-color: #819ab4; }
 .demo-button[aria-pressed="true"] { color: var(--blue-gray); background: var(--soft-blue); border-color: #819fbe; }
-.point-toolbar { margin: 0 auto; max-width: 650px; gap: 6px; }
-.point-toolbar .demo-button { width: 44px; padding-inline: 0; }
-.point-pair, .inspection-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.point-pair, .inspection-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-bottom: 8px; }
+.point-toolbar { margin: 32px auto 18px; max-width: 650px; gap: 8px; }
 .point-view { min-width: 0; margin: 0; text-align: center; }
 .point-view figcaption { font: 400 22px/1.2 "Gaegu", sans-serif; }
 .point-stage { position: relative; }
@@ -253,75 +252,54 @@ td:nth-child(2) { white-space: nowrap; color: var(--blue-gray); }
 }
 @media print {
   html { scroll-behavior: auto; }
-  body { background: white; color: #303030; font-size: 12pt; }
+  body { background: white; color: #303030; font-size: 11pt; }
   main { width: 100%; overflow: visible; }
-  .hero { display: block; min-height: 0; padding: 10mm 0 14mm; break-after: page; }
-  .hero-title { width: 125mm; max-width: 90%; max-height: 160mm; margin: 0 auto; }
-  .project-meta { margin-top: 8mm; font-size: 12pt; }
-  .part { padding: 6mm 0 10mm; }
-  h2 { font-size: 20pt; margin-bottom: 6mm; break-after: avoid; }
-  h3 { font-size: 16pt; margin-bottom: 4mm; break-after: avoid; }
-  .copy, .rectification-intro .copy { font-size: 12pt; line-height: 1.4; margin-bottom: 5mm; }
-  .copy p { margin-bottom: 3mm; orphans: 3; widows: 3; }
-  .formula, .equations { font-size: 15pt; margin: 4mm auto 6mm; }
+  .hero { display: block; min-height: 0; padding: 6mm 0 8mm; break-after: avoid; }
+  .hero-title { width: 120mm; max-width: 85%; max-height: 120mm; margin: 0 auto; }
+  .part { padding: 4mm 0 8mm; }
+  h2 { font-size: 16pt; margin-bottom: 4mm; break-after: avoid; }
+  h3 { font-size: 13pt; margin-bottom: 3mm; break-after: avoid; }
+  .copy, .rectification-intro .copy { font-size: 10.5pt; line-height: 1.4; margin-bottom: 4mm; }
+  .copy p { margin-bottom: 2mm; orphans: 3; widows: 3; }
+  .formula, .equations { font-size: 12pt; margin: 3mm auto 4mm; }
   .result { break-inside: avoid; }
   .result img { cursor: default; }
-  .result.wide { margin: 5mm auto 7mm; }
-  figcaption, .homography-layout figcaption, .mosaic-sources figcaption, .corner-figure figcaption, .process-grid figcaption { font-size: 10pt; margin-top: 2mm; }
-  .source-set { margin: 6mm auto 9mm; break-inside: avoid; }
-  .gallery { gap: 4mm; }
+  .result.wide { margin: 4mm auto 6mm; }
+  figcaption, .homography-layout figcaption, .mosaic-sources figcaption, .corner-figure figcaption { font-size: 9.5pt; margin-top: 2mm; }
+  .source-set { margin: 4mm auto 6mm; break-inside: avoid; }
+  .gallery { gap: 3mm; }
   .two-up { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .comparison-pair, .correspondence-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
-  .comparison-pair, .rectification-results { margin: 5mm auto 7mm; }
+  .comparison-pair, .rectification-results { margin: 4mm auto 6mm; }
   .three-up { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
-  .homography-case { margin: 6mm 0 9mm; break-inside: auto; }
-  .homography-layout { grid-template-columns: 1fr; gap: 5mm; }
+  .homography-case { margin: 5mm 0 7mm; break-inside: avoid; }
+  .homography-layout { grid-template-columns: 1fr; gap: 4mm; }
   .matrix-result { width: 80mm; max-width: 100%; break-inside: avoid; }
-  .matrix { font-size: 10pt; gap: 3mm 1mm; padding: 3mm 2mm; }
-  .matrix-label { font-size: 13pt; margin-bottom: 3mm; }
-  .fit-note { font-size: 9pt; margin-top: 3mm; }
-  .subheading { margin-top: 8mm; margin-bottom: 5mm; }
-  .runtime-comparison { margin: 6mm auto; break-inside: avoid; }
-  table { font-size: 11pt; }
-  th, td { font-size: 11pt; padding: 3mm 2mm; }
-  caption { font-size: 10pt; padding-bottom: 3mm; }
-  .rectification-intro { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 6mm; break-inside: avoid; margin-bottom: 5mm; }
+  .matrix { font-size: 9.5pt; gap: 2mm 1mm; padding: 2mm; }
+  .matrix-label { font-size: 11pt; margin-bottom: 2mm; }
+  .runtime-comparison { margin: 4mm auto; break-inside: avoid; }
+  table { font-size: 10pt; }
+  th, td { font-size: 10pt; padding: 2mm; }
+  caption { font-size: 9.5pt; padding-bottom: 2mm; }
+  .rectification-intro { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 4mm; break-inside: avoid; margin-bottom: 4mm; }
   .corner-figure { width: 65mm; max-width: 100%; }
-  .rectification-intro .copy { margin-bottom: 0; }
-  .mosaic-case { margin: 7mm 0 10mm; }
-  .mosaic-sources { width: 115mm; max-width: 100%; margin-bottom: 5mm; }
-  .process-grid { margin: 5mm auto; }
+  .mosaic-case { margin: 5mm 0 8mm; }
+  .mosaic-sources { width: 110mm; max-width: 100%; margin-bottom: 4mm; }
   .mosaic-result { width: 160mm; max-width: 100%; }
-  .mosaic-card { width: 100%; margin: 7mm auto; padding: 5mm; box-shadow: none; break-inside: avoid; }
-  .mosaic-card h3 { font-size: 16pt; margin-bottom: 4mm; }
-  .mosaic-card .mosaic-sources { width: 90mm; margin-bottom: 5mm; }
-  .mosaic-card .mosaic-result img { max-height: 95mm; }
-  .mosaic-card .mosaic-sources figcaption, .mosaic-card .mosaic-result figcaption { font-size: 10pt; margin-top: 2mm; }
-  .interactive-panel { width: 100%; margin: 5mm auto; padding: 5mm; box-shadow: none; overflow: visible; }
-  .report-card { width: 100%; margin: 5mm auto; padding: 5mm; }
-  .rectification-card .copy { font-size: 12pt; }
-  .rectification-sources img { height: 55mm; }
-  .rectification-sources figcaption, .rectified-pair figcaption { font-size: 10pt; }
+  .mosaic-card { width: 100%; margin: 5mm auto; padding: 4mm; box-shadow: none; break-inside: avoid; border: 1px solid #cbd9e7; }
+  .mosaic-card h3 { font-size: 13pt; margin-bottom: 3mm; }
+  .mosaic-card .mosaic-sources { width: 85mm; margin-bottom: 4mm; }
+  .mosaic-card .mosaic-result img { max-height: 85mm; }
+  .report-card { width: 100%; margin: 4mm auto; padding: 4mm; break-inside: avoid; }
+  .rectification-card .copy { font-size: 10.5pt; }
+  .rectification-sources img { height: 50mm; object-fit: contain; }
+  .rectification-sources figcaption, .rectified-pair figcaption { font-size: 9.5pt; }
   .rectification-sources, .rectified-pair { break-inside: avoid; }
-  .mosaic-card .mosaic-step-view img { max-height: 95mm; }
-  .detail-lens { display: none !important; }
-  .interaction-title { font-size: 16pt; margin-bottom: 4mm; }
-  .point-pair, .inspection-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4mm; }
-  .point-view, .inspect-column { break-inside: avoid; }
-  .point-view figcaption, .rectification-view figcaption, .mosaic-step-view figcaption { font-size: 10pt; }
-  .point-marker { width: 17px; height: 17px; font-size: 11px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-  .demo-controls, .point-toolbar { gap: 2mm; margin-bottom: 4mm; }
-  .point-pair, .demo-controls { break-inside: avoid; }
-  .demo-button { min-height: 9mm; padding: 2mm 3mm; font-size: 11pt; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-  .point-toolbar .demo-button { width: 9mm; }
-  .demo-hint, .demo-readout, .result-archive > summary { font-size: 10pt; }
-  .rectification-view img { height: 85mm; }
-  .mosaic-step-view, .wipe-stage { max-width: 145mm; break-inside: avoid; }
-  .demo-mode-view[hidden] { display: block !important; margin-top: 6mm; }
-  .result-archive { margin: 5mm auto; }
-  .result-archive::details-content { content-visibility: visible; }
-  .result-archive:not([open]) > :not(summary) { display: block !important; }
-  .result-archive:not([open]) > .gallery { display: grid !important; }
-  .detail-canvas { margin-top: 3mm; }
-  .lightbox { display: none !important; }
+  .interactive-panel { width: 100%; margin: 4mm auto; padding: 4mm; box-shadow: none; overflow: visible; }
+  .mosaic-steps { display: block !important; }
+  .mosaic-step-view img { display: block !important; width: 100% !important; max-width: 100% !important; max-height: 85mm !important; }
+
+  /* 打印时隐藏所有交互式按钮、滑块控件及覆盖圆点 */
+  .demo-controls, .point-toolbar, .point-marker, .wipe-stage, .wipe-range, .wipe-divider, .wipe-label, .detail-lens, .lightbox, .close-lightbox { display: none !important; }
+  .demo-mode-view[hidden] { display: none !important; }
 }
