@@ -21,8 +21,7 @@
     <section class="part" id="a1" aria-labelledby="a1-heading">
       <h2 id="a1-heading">A.1 · shoot the pictures</h2>
       <div class="copy">
-        <p>For this project, I shot three sets of overlapping photos around Berkeley: a row of storefronts, a street intersection, and an indoor atrium. I rotated the camera while trying to keep the center of projection fixed, maintaining roughly 50% to 60% overlap between views.</p>
-        <p>For each scene, the second image serves as the stationary reference, and the first image is warped into its coordinate frame.</p>
+        <p>Three overlapping photo pairs shot with a fixed center of projection and ~50% overlap. In each scene, the left image is warped into the perspective of the right reference image.</p>
       </div>
 
       <div class="source-set" id="sources-scene1">
@@ -51,15 +50,14 @@
     <section class="part" id="a2" aria-labelledby="a2-heading">
       <h2 id="a2-heading">A.2 · recover homographies</h2>
       <div class="copy">
-        <p>To align each pair, we need to recover a 3×3 projective transform matrix (homography) with 8 degrees of freedom (fixing h<sub>33</sub> = 1). Since four points give an exact but noise-sensitive solution, I labeled 12 pairs of corresponding feature points per scene to get a much more reliable fit.</p>
-        <p>Each point correspondence (x, y) → (u, v) gives two linear equations:</p>
+        <p>To compute the 3×3 homography H (fixing h<sub>33</sub> = 1), I clicked 12 point correspondences per scene. Each match gives two linear equations:</p>
       </div>
       <div class="equations" aria-label="Two linear equations for each point correspondence">
         <p>x h<sub>11</sub> + y h<sub>12</sub> + h<sub>13</sub> − ux h<sub>31</sub> − uy h<sub>32</sub> = u</p>
         <p>x h<sub>21</sub> + y h<sub>22</sub> + h<sub>23</sub> − vx h<sub>31</sub> − vy h<sub>32</sub> = v</p>
       </div>
       <div class="copy">
-        <p>Stacking 12 points yields an overdetermined system A h = b (where A is 24 × 8), which I solved using least-squares (<code>np.linalg.lstsq</code>) to minimize error across all clicked points. The recovered homography matrices for each scene are shown below:</p>
+        <p>Stacking the 12 points gives a 24×8 system Ah = b, solved via least-squares (<code>np.linalg.lstsq</code>). The recovered homography matrices:</p>
       </div>
 
       <article class="homography-case" aria-labelledby="h-scene1">
@@ -118,12 +116,12 @@
     <section class="part" id="a3" aria-labelledby="a3-heading">
       <h2 id="a3-heading">A.3 · warp the images</h2>
       <div class="copy">
-        <p>Forward warping maps source pixels directly forward, which often leaves empty holes and gaps on the destination canvas. To avoid this, I used inverse warping: we first map the four source corners with H to determine the output bounding box, and then for every pixel on that canvas, use H<sup>−1</sup> to look up its source position.</p>
+        <p>To avoid holes from forward projection, I used inverse warping with H<sup>−1</sup> across the transformed bounding box.</p>
       </div>
       <p class="formula">p<sub>source</sub> ∝ H<sup>−1</sup> p<sub>target</sub></p>
       <h3 class="subheading">nearest neighbor vs. bilinear</h3>
       <div class="copy">
-        <p>I implemented both nearest neighbor and bilinear interpolation from scratch without relying on high-level library functions. Nearest neighbor simply rounds the float coordinate to the closest pixel, while bilinear interpolation takes a weighted average of the four surrounding pixels.</p>
+        <p>I implemented both interpolation methods from scratch: nearest neighbor rounds to the nearest integer pixel, while bilinear computes a weighted average of the 4 neighboring pixels.</p>
       </div>
       <div class="gallery two-up comparison-pair report-card" aria-label="Same source image and homography with two interpolation methods">
         <figure class="result"><img src="../pics/part%20A%20output/A3_scene1_nearest_neighbor_warp.png" width="1277" height="1164" alt="Scene 1 first view warped using nearest-neighbor sampling"><figcaption>nearest neighbor</figcaption></figure>
@@ -138,11 +136,11 @@
           </tbody>
         </table>
       </div>
-      <div class="copy"><p>On the street image, bilinear interpolation took about 1.85× as long (~4.2s vs ~2.3s) due to the extra neighbor lookups and weighting, but it noticeably reduces jagged stair-stepping artifacts along diagonal edges.</p></div>
+      <div class="copy"><p>Bilinear takes ~1.85× longer (~4.2s vs ~2.3s) but significantly reduces pixelated edges along diagonal lines.</p></div>
 
       <article class="report-card rectification-card" id="rectification-crumbl">
         <h3>rectification · Crumbl box</h3>
-        <div class="copy"><p>To verify the homography and warping code before building full panoramas, I tested image rectification on two planar objects. First is a Crumbl cookie box photographed at an angle: I clicked the four corners of the top opening and computed a homography to map them into a front-facing 500 × 300 rectangle.</p><p>As shown in the close-ups, bilinear interpolation produces much cleaner and smoother boundaries along the box opening compared to the blocky pixel steps of nearest neighbor.</p></div>
+        <div class="copy"><p>Rectifying the angled Crumbl box by mapping its four corners to a 500×300 rectangle. Bilinear interpolation leaves much smoother boundaries along the box opening.</p></div>
         <div class="gallery two-up rectification-sources">
           <figure class="result"><img src="../pics/part%20A%20output/A3_crumbl_original.png" width="1280" height="960" alt="Original photograph of the Crumbl box before rectification"><figcaption>original</figcaption></figure>
           <figure class="result corner-figure"><img src="../pics/part%20A%20output/A3_crumbl_corners.png" width="1280" height="960" alt="Four red numbered corners selected around the photographed Crumbl box opening"><figcaption>selected corners</figcaption></figure>
@@ -155,7 +153,7 @@
 
       <article class="report-card rectification-card" id="rectification-book">
         <h3>rectification · book cover</h3>
-        <div class="copy"><p>Next, I rectified an angled photo of a Monster book cover by mapping its four corners to a 500 × 300 rectangle.</p><p>The perspective distortion is successfully eliminated in both outputs. Nearest neighbor leaves visible pixel staircasing along the angled title lettering, whereas bilinear interpolation makes the typography noticeably smoother and more legible.</p></div>
+        <div class="copy"><p>Rectifying a Monster book cover to a 500×300 rectangle. Bilinear interpolation keeps the title typography smooth without staircasing.</p></div>
         <div class="gallery two-up rectification-sources">
           <figure class="result"><img src="../pics/part%20A%20output/A3_book_original.png" width="960" height="1280" alt="Original photograph of the Monster book before rectification"><figcaption>original</figcaption></figure>
           <figure class="result corner-figure"><img src="../pics/part%20A%20output/A3_book_corners.png" width="960" height="1280" alt="Four red numbered corners selected around a Monster book cover"><figcaption>selected corners</figcaption></figure>
@@ -170,11 +168,10 @@
     <section class="part" id="a4" aria-labelledby="a4-heading">
       <h2 id="a4-heading">A.4 · blend the images into a mosaic</h2>
       <div class="copy">
-        <p>To create each mosaic, we first find the bounding box of the warped first image combined with the reference image, defining a shared canvas with an offset translation so that coordinates start at (0, 0).</p>
-        <p>Simply pasting or averaging overlapping pixels creates harsh edge seams because exposure and lighting differ between shots. Instead, I used weighted blending: each image has an alpha weight map warped alongside its color channels, and colors are normalized by the sum of valid weights so edge areas don't artificially darken.</p>
+        <p>I warped image 1 into image 2's frame and placed them on a shared canvas offset to (0, 0).</p>
+        <p>To avoid harsh seam lines, I used distance feathering where weights taper linearly toward image edges, normalized by the sum of valid weights:</p>
       </div>
       <p class="formula">I<sub>mosaic</sub> = (w<sub>1</sub> I<sub>1</sub> + w<sub>2</sub> I<sub>2</sub>) / (w<sub>1</sub> + w<sub>2</sub>)</p>
-      <div class="copy"><p>While the equal-weight baseline shows an abrupt transition, feathering (<code>makeFeatherWeights</code>) uses the distance from each pixel to the nearest image boundary: weights taper to 0 at the borders and peak at 1 near the center. This creates a smooth linear cross-dissolve across the overlap seam.</p></div>
 
       <article class="mosaic-case mosaic-card" aria-labelledby="mosaic1-heading">
         <h3 id="mosaic1-heading">mosaic 1 · storefronts</h3>
@@ -201,7 +198,7 @@
         </div>
         <figure class="result mosaic-result"><img src="../pics/part%20A%20output/A4_scene3_feather_mosaic.png" width="3123" height="2362" alt="Final feather-blended mosaic of the indoor atrium"><figcaption>feather blending</figcaption></figure>
       </article>
-      <div class="copy closing-copy"><p>Feathering effectively removes exposure seams, though small geometric misalignments and perspective distortion can still occur near the outer boundaries if the camera rotation wasn't perfectly centered on the COP.</p></div>
+      <div class="copy closing-copy"><p>Feathering removes exposure seams effectively, leaving only slight edge blur where perspective stretches.</p></div>
     </section>
   </main>
 
