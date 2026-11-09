@@ -270,6 +270,26 @@ td:nth-child(2) { white-space: nowrap; color: var(--blue-gray); }
   .matrix { font-size: 15px; }
   .interactive-panel .matrix { font-size: 13px; }
 }
+.part-b-start { padding-top: 100px; }
+.feature-corners { gap: 28px 24px; }
+.feature-corners figcaption { color: var(--blue-gray); }
+.descriptor-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 18px; width: min(660px,100%); margin: 0 auto; }
+.descriptor-sample { min-width: 0; margin: 0; }
+.descriptor-sample img { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+.feature-matches .result img { width: 100%; }
+.feature-mosaic .stitch-comparison { width: 100%; margin: 0 auto; }
+.feature-mosaic .stitch-comparison img { width: 100%; height: auto; max-height: 440px; object-fit: contain; }
+.stitch-pair { width: 100%; }
+.stitch-pair img { aspect-ratio: 4 / 3; object-fit: contain; }
+.feature-mosaic .result-discussion { max-width: 880px; margin: 24px auto 0; font-size: 23px; line-height: 1.4; }
+.feature-mosaic .result-discussion p { margin-bottom: 0; }
+@media (max-width: 640px) {
+  .part-b-start { padding-top: 64px; }
+  .feature-corners { gap: 24px 14px; }
+  .feature-corners figcaption { font-size: 19px; }
+  .descriptor-grid { gap: 10px; }
+  .feature-mosaic .result-discussion { font-size: 21px; margin-top: 20px; }
+}
 @media print {
   html { scroll-behavior: auto; }
   body { background: white; color: #303030; font-size: 11pt; }
@@ -322,4 +342,12 @@ td:nth-child(2) { white-space: nowrap; color: var(--blue-gray); }
   /* 打印时隐藏所有交互式按钮、滑块控件及覆盖圆点 */
   .demo-controls, .point-toolbar, .point-marker, .wipe-stage, .wipe-range, .wipe-divider, .wipe-label, .detail-lens, .lightbox, .close-lightbox { display: none !important; }
   .demo-mode-view[hidden] { display: none !important; }
+  .part-b-start { padding-top: 6mm; }
+  .feature-corners { gap: 4mm; }
+  .feature-corners .result img { max-height: 50mm; object-fit: contain; }
+  .feature-corners figcaption { font-size: 9.5pt; }
+  .descriptor-grid { max-width: 125mm; gap: 3mm; }
+  .descriptor-card { break-inside: avoid; }
+  .feature-mosaic .stitch-comparison img { max-height: 90mm; }
+  .feature-mosaic .result-discussion { font-size: 10.5pt; line-height: 1.4; margin-top: 4mm; }
 }

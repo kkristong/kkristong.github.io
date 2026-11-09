@@ -36,7 +36,7 @@ dialog.addEventListener('click', (event) => {
 const outputBase = '../pics/part%20A%20output/';
 const pointSets = [
   {names:[3,4],size:[640,480],left:[[383,149],[382,193],[416,149],[418,189],[537,143],[537,189],[514,237],[618,251],[380,331],[406,329],[343,219],[374,129]],right:[[83,97],[79,144],[121,105],[119,147],[239,124],[239,166],[216,210],[297,227],[72,305],[100,303],[25,175],[70,70]]},
-  {names:[1,2],size:[1280,960],left:[[913,507],[912,564],[1111,488],[1116,558],[964,380],[1213,273],[1223,370],[1124,628],[1130,744],[1187,619],[1194,446],[1202,529]],right:[[133,466],[133,529],[342,459],[340,522],[201,337],[433,275],[435,360],[342,587],[340,693],[397,576],[412,425],[413,495]]},
+  {names:[1,2],size:[1280,960],left:[[244,647],[769,644],[201,775],[767,760],[792,745],[853,797],[367,770],[586,765],[771,786],[859,825],[616,878],[339,874],[444,715]],right:[[176,195],[795,210],[193,332],[779,328],[803,313],[852,362],[368,331],[595,330],[779,357],[850,386],[629,426],[370,418],[441,289]]},
   {names:[5,6],size:[1280,960],left:[[631,377],[765,380],[628,525],[854,344],[1086,420],[1161,422],[660,802],[1178,467],[1169,338],[874,542],[655,425],[691,426]],right:[[40,393],[218,407],[37,579],[318,375],[531,457],[590,462],[90,907],[603,497],[593,388],[342,577],[74,455],[126,458]]}
 ];
 
@@ -71,7 +71,7 @@ function initCorrespondences() {
       <div class="point-pair">${['left', 'right'].map((side, view) => `
         <figure class="point-view">
           <div class="point-stage">
-            <img src="${outputBase}A1_scene${scene + 1}_source_${side}.png" width="${data.size[0]}" height="${data.size[1]}" alt="Scene ${scene + 1}, image ${data.names[view]}, with interactive matching points">
+            <img src="${outputBase}A1_scene${scene + 1}_source_${side}.png${scene === 1 ? '?v=20261108' : ''}" width="${data.size[0]}" height="${data.size[1]}" alt="Scene ${scene + 1}, image ${data.names[view]}, with interactive matching points">
             ${data[side].map(([x,y], point) => `<button type="button" class="point-marker" data-point="${point}" style="left:${100*x/data.size[0]}%;top:${100*y/data.size[1]}%" aria-label="Image ${data.names[view]}, matching point ${point}" aria-pressed="false">${point}</button>`).join('')}
           </div>
         </figure>`).join('')}

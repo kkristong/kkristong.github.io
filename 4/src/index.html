@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="CS180 Project 4A — Image Warping and Mosaicing, by Kris Tong.">
+  <meta name="description" content="CS180 Project 4 — Image Warping and Mosaicing, by Kris Tong.">
   <title>Image Warping and Mosaicing</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&amp;family=Gaegu:wght@400;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=9">
-  <script src="script.js?v=11" defer></script>
+  <link rel="stylesheet" href="styles.css?v=10">
+  <script src="script.js?v=12" defer></script>
 </head>
 <body>
   <header class="hero">
@@ -32,10 +32,10 @@
         </div>
       </div>
       <div class="source-set" id="sources-scene2">
-        <h3>scene 2 · street intersection</h3>
+        <h3>scene 2 · clothing store</h3>
         <div class="gallery two-up source-pair">
-          <figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_left.png" width="1280" height="960" alt="Scene 2 first source photograph, looking along the intersection"><figcaption>source</figcaption></figure>
-          <figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_right.png" width="1280" height="960" alt="Scene 2 second source photograph, used as the reference"><figcaption>reference</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_left.png?v=20261108" width="1280" height="960" alt="Scene 2 first source photograph, of the clothing store"><figcaption>source</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_right.png?v=20261108" width="1280" height="960" alt="Scene 2 second source photograph, used as the reference"><figcaption>reference</figcaption></figure>
         </div>
       </div>
       <div class="source-set" id="sources-scene3">
@@ -50,14 +50,14 @@
     <section class="part" id="a2" aria-labelledby="a2-heading">
       <h2 id="a2-heading">A.2 · recover homographies</h2>
       <div class="copy">
-        <p>To compute the 3×3 homography H (fixing h<sub>33</sub> = 1), I clicked 12 point correspondences per scene. Each match gives two linear equations:</p>
+        <p>To compute the 3×3 homography H (fixing h<sub>33</sub> = 1), I clicked 12 point correspondences for scenes 1 and 3, and 13 for the updated scene 2. Each match gives two linear equations:</p>
       </div>
       <div class="equations" aria-label="Two linear equations for each point correspondence">
         <p>x h<sub>11</sub> + y h<sub>12</sub> + h<sub>13</sub> − ux h<sub>31</sub> − uy h<sub>32</sub> = u</p>
         <p>x h<sub>21</sub> + y h<sub>22</sub> + h<sub>23</sub> − vx h<sub>31</sub> − vy h<sub>32</sub> = v</p>
       </div>
       <div class="copy">
-        <p>Stacking the 12 points gives a 24×8 system Ah = b, solved via least-squares (<code>np.linalg.lstsq</code>). The recovered homography matrices:</p>
+        <p>Stacking N point pairs gives a 2N×8 system Ah = b, solved via least-squares (<code>np.linalg.lstsq</code>). The recovered homography matrices:</p>
       </div>
 
       <article class="homography-case" aria-labelledby="h-scene1">
@@ -81,15 +81,15 @@
         <h3 id="h-scene2">scene 2</h3>
         <div class="homography-layout">
           <div class="gallery two-up correspondence-pair">
-            <figure class="result"><img src="../pics/part%20A%20output/A2_scene2_correspondences_left.png" width="1280" height="960" alt="Twelve numbered matching points on Scene 2 image 1"></figure>
-            <figure class="result"><img src="../pics/part%20A%20output/A2_scene2_correspondences_right.png" width="1280" height="960" alt="The same twelve numbered matching points on Scene 2 reference image 2"></figure>
+            <figure class="result"><img src="../pics/part%20A%20output/A2_scene2_correspondences_left.png?v=20261108" width="1280" height="960" alt="Thirteen numbered matching points on Scene 2 image 1"></figure>
+            <figure class="result"><img src="../pics/part%20A%20output/A2_scene2_correspondences_right.png?v=20261108" width="1280" height="960" alt="The same thirteen numbered matching points on Scene 2 reference image 2"></figure>
           </div>
           <div class="matrix-result">
             <p class="matrix-label">H<sub>2</sub> =</p>
             <div class="matrix" role="math" aria-label="Recovered Scene 2 homography">
-              <span>2.750173</span><span>−0.1712533</span><span>−2117.978</span>
-              <span>0.7690293</span><span>2.279365</span><span>−812.1043</span>
-              <span>0.001430573</span><span>−0.0001249707</span><span>1</span>
+              <span>3.603376</span><span>1.854011</span><span>−1549</span>
+              <span>0.1832355</span><span>3.968938</span><span>−2044.458</span>
+              <span>0.0003765237</span><span>0.002752019</span><span>1</span>
             </div>
           </div>
         </div>
@@ -182,12 +182,12 @@
       </article>
 
       <article class="mosaic-case mosaic-card" aria-labelledby="mosaic2-heading">
-        <h3 id="mosaic2-heading">mosaic 2 · street intersection</h3>
+        <h3 id="mosaic2-heading">mosaic 2 · clothing store</h3>
         <div class="gallery two-up mosaic-sources">
-          <figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_left.png" width="1280" height="960" alt="First source photograph for the street-intersection mosaic"><figcaption>source</figcaption></figure>
-          <figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_right.png" width="1280" height="960" alt="Reference photograph for the street-intersection mosaic"><figcaption>reference</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_left.png?v=20261108" width="1280" height="960" alt="First source photograph for the clothing-store mosaic"><figcaption>source</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_right.png?v=20261108" width="1280" height="960" alt="Reference photograph for the clothing-store mosaic"><figcaption>reference</figcaption></figure>
         </div>
-        <figure class="result mosaic-result"><img src="../pics/part%20A%20output/A4_scene2_feather_mosaic.png" width="3873" height="2375" alt="Final feather-blended mosaic of the street intersection"><figcaption>feather blending</figcaption></figure>
+        <figure class="result mosaic-result"><img src="../pics/part%20A%20output/A4_scene2_feather_mosaic.png?v=20261108" width="3617" height="3005" alt="Final feather-blended mosaic of the clothing store"><figcaption>feather blending</figcaption></figure>
       </article>
 
       <article class="mosaic-case mosaic-card" aria-labelledby="mosaic3-heading">
@@ -198,8 +198,91 @@
         </div>
         <figure class="result mosaic-result"><img src="../pics/part%20A%20output/A4_scene3_feather_mosaic.png" width="3123" height="2362" alt="Final feather-blended mosaic of the indoor atrium"><figcaption>feather blending</figcaption></figure>
       </article>
-      <div class="copy closing-copy"><p>Feathering removes exposure seams effectively, leaving only slight edge blur where perspective stretches.</p></div>
+      <div class="copy closing-copy"><p>Feathering softens brightness transitions, but it does not correct geometric misalignment or moving subjects. The updated clothing-store pair still has visible ghosting near the racks and people.</p></div>
     </section>
+
+    <section class="part part-b-start" id="b1" aria-labelledby="b1-heading">
+      <h2 id="b1-heading">B.1 · Harris corners &amp; ANMS</h2>
+      <div class="copy">
+        <p>For automatic stitching, I replace manually clicked points with detected features. I use the supplied Harris detector at a single scale, discarding a 20-pixel border. The storefront pair contains 7,035 corners in the source view and 6,569 in the reference.</p>
+        <p>Adaptive Non-Maximal Suppression (ANMS) measures each corner’s distance to its nearest sufficiently stronger neighbor, with c<sub>robust</sub> = 0.9. I keep the 500 largest suppression radii per image. Compared with the dense Harris output, these points cover the scene more evenly instead of clustering on textured regions.</p>
+      </div>
+      <div class="report-card feature-corners gallery two-up">
+        <figure class="result"><img src="../pics/part%20B%20output/B1_scene1_harris_left.png" width="640" height="480" alt="Storefront source view with all Harris corners"><figcaption>source · Harris</figcaption></figure>
+<figure class="result"><img src="../pics/part%20B%20output/B1_scene1_harris_right.png" width="640" height="480" alt="Storefront reference view with all Harris corners"><figcaption>reference · Harris</figcaption></figure>
+<figure class="result"><img src="../pics/part%20B%20output/B1_scene1_anms_left.png" width="640" height="480" alt="Storefront source view with 500 ANMS-selected corners"><figcaption>source · ANMS</figcaption></figure>
+<figure class="result"><img src="../pics/part%20B%20output/B1_scene1_anms_right.png" width="640" height="480" alt="Storefront reference view with 500 ANMS-selected corners"><figcaption>reference · ANMS</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="part" id="b2" aria-labelledby="b2-heading">
+      <h2 id="b2-heading">B.2 · feature descriptors</h2>
+      <div class="copy">
+        <p>I blur each grayscale image with a Gaussian filter (σ = 2). Around every selected corner, I take a 40×40 window and sample every fifth pixel, starting at offset 2, to form an axis-aligned 8×8 descriptor. Subtracting its mean and dividing by its standard deviation reduces sensitivity to brightness and contrast changes.</p>
+      </div>
+      <p class="formula">d = (p − μ(p)) / (σ(p) + 10<sup>−8</sup>)</p>
+      <div class="report-card descriptor-card">
+        <div class="descriptor-grid" aria-label="Ten normalized feature descriptors from the storefront source image">
+          <figure class="descriptor-sample"><img src="../pics/part%20B%20output/B2_descriptor_01.png" width="8" height="8" alt="Normalized 8 by 8 feature descriptor 1"></figure>
+<figure class="descriptor-sample"><img src="../pics/part%20B%20output/B2_descriptor_02.png" width="8" height="8" alt="Normalized 8 by 8 feature descriptor 2"></figure>
+<figure class="descriptor-sample"><img src="../pics/part%20B%20output/B2_descriptor_03.png" width="8" height="8" alt="Normalized 8 by 8 feature descriptor 3"></figure>
+<figure class="descriptor-sample"><img src="../pics/part%20B%20output/B2_descriptor_04.png" width="8" height="8" alt="Normalized 8 by 8 feature descriptor 4"></figure>
+<figure class="descriptor-sample"><img src="../pics/part%20B%20output/B2_descriptor_05.png" width="8" height="8" alt="Normalized 8 by 8 feature descriptor 5"></figure>
+<figure class="descriptor-sample"><img src="../pics/part%20B%20output/B2_descriptor_06.png" width="8" height="8" alt="Normalized 8 by 8 feature descriptor 6"></figure>
+<figure class="descriptor-sample"><img src="../pics/part%20B%20output/B2_descriptor_07.png" width="8" height="8" alt="Normalized 8 by 8 feature descriptor 7"></figure>
+<figure class="descriptor-sample"><img src="../pics/part%20B%20output/B2_descriptor_08.png" width="8" height="8" alt="Normalized 8 by 8 feature descriptor 8"></figure>
+<figure class="descriptor-sample"><img src="../pics/part%20B%20output/B2_descriptor_09.png" width="8" height="8" alt="Normalized 8 by 8 feature descriptor 9"></figure>
+<figure class="descriptor-sample"><img src="../pics/part%20B%20output/B2_descriptor_10.png" width="8" height="8" alt="Normalized 8 by 8 feature descriptor 10"></figure>
+        </div>
+      </div>
+      <div class="copy"><p>Each image produces 500 descriptors, each with 64 values. These ten examples show the coarse intensity patterns used for matching; no rotation alignment is applied.</p></div>
+    </section>
+
+    <section class="part" id="b3" aria-labelledby="b3-heading">
+      <h2 id="b3-heading">B.3 · feature matching</h2>
+      <div class="copy">
+        <p>For each source descriptor, I compute Euclidean distances to the reference descriptors. A match is accepted when the closest distance divided by the second-closest distance is below 0.7. This ratio test rejects descriptors with several similarly good candidates.</p>
+        <p>The storefront pair retains 61 tentative matches. Most lines connect the shared building, but appearance alone still allows incorrect correspondences, which are handled by RANSAC next.</p>
+      </div>
+      <div class="report-card feature-matches">
+        <figure class="result"><img src="../pics/part%20B%20output/notebook_figures/B3_matches.png" width="1590" height="608" alt="Sixty-one ratio-test feature matches connecting the storefront source and reference views"></figure>
+      </div>
+    </section>
+
+    <section class="part" id="b4" aria-labelledby="b4-heading">
+      <h2 id="b4-heading">B.4 · RANSAC &amp; automatic mosaics</h2>
+      <div class="copy">
+        <p>I implemented 4-point RANSAC from scratch. Each of 2,000 trials samples four matches, estimates a homography with <code>computeH</code>, and projects all source points into the reference image. Matches with reprojection error below 3 pixels are counted as inliers. I keep the largest consensus set and refit H using all its inliers.</p>
+        <p>The final homography feeds the same inverse warping and feather blending used in Part A. Below, each manual result uses clicked correspondences, while each automatic result uses matched features and RANSAC.</p>
+      </div>
+
+      <article class="mosaic-card feature-mosaic" aria-labelledby="auto-scene1-heading">
+        <h3 id="auto-scene1-heading">scene 1 · storefronts</h3>
+        <div class="gallery two-up mosaic-sources"><figure class="result"><img src="../pics/part%20A%20output/A1_scene1_source_left.png" width="640" height="480" alt="Scene 1 source photograph"><figcaption>source</figcaption></figure><figure class="result"><img src="../pics/part%20A%20output/A1_scene1_source_right.png" width="640" height="480" alt="Scene 1 reference photograph"><figcaption>reference</figcaption></figure></div>
+        <figure class="result stitch-comparison"><img src="../pics/part%20B%20output/notebook_figures/B4_scene1_comparison.png" width="1790" height="705" alt="Side-by-side manually and automatically stitched storefront mosaics"></figure>
+        <div class="copy result-discussion"><p>RANSAC retains 51 of 61 matches. Both mosaics align the main storefront, although the automatic estimate changes the outer perspective and stretches the left edge more. Small alignment differences remain near the overlap.</p></div>
+      </article>
+
+      <article class="mosaic-card feature-mosaic" aria-labelledby="auto-scene2-heading">
+        <h3 id="auto-scene2-heading">scene 2 · clothing store</h3>
+        <div class="gallery two-up mosaic-sources"><figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_left.png?v=20261108" width="1280" height="960" alt="Scene 2 source photograph"><figcaption>source</figcaption></figure><figure class="result"><img src="../pics/part%20A%20output/A1_scene2_source_right.png?v=20261108" width="1280" height="960" alt="Scene 2 reference photograph"><figcaption>reference</figcaption></figure></div>
+        <div class="gallery two-up stitch-pair">
+          <figure class="result"><img src="../pics/part%20B%20output/B4_scene2_manual.png" width="3617" height="3005" alt="Manual mosaic of the updated clothing-store image pair"><figcaption>manual</figcaption></figure>
+          <figure class="result"><img src="../pics/part%20B%20output/B4_scene2_automatic.png" width="2410" height="1962" alt="Automatic mosaic of the updated clothing-store image pair"><figcaption>automatic</figcaption></figure>
+        </div>
+        <div class="copy result-discussion"><p>The automatic result has a different perspective from the manual estimate, with visible ghosting around clothing racks and people. The small RANSAC consensus makes this estimate less reliable than the other examples.</p></div>
+      </article>
+
+      <article class="mosaic-card feature-mosaic" aria-labelledby="auto-scene3-heading">
+        <h3 id="auto-scene3-heading">scene 3 · indoor atrium</h3>
+        <div class="gallery two-up mosaic-sources"><figure class="result"><img src="../pics/part%20A%20output/A1_scene3_source_left.png" width="1280" height="960" alt="Scene 3 source photograph"><figcaption>source</figcaption></figure><figure class="result"><img src="../pics/part%20A%20output/A1_scene3_source_right.png" width="1280" height="960" alt="Scene 3 reference photograph"><figcaption>reference</figcaption></figure></div>
+        <figure class="result stitch-comparison"><img src="../pics/part%20B%20output/notebook_figures/B4_scene3_comparison.png" width="1790" height="705" alt="Side-by-side manually and automatically stitched indoor-atrium mosaics"></figure>
+        <div class="copy result-discussion"><p>RANSAC retains 30 of 64 matches. The railing and atrium structure are broadly aligned in both results. People and nearby objects show duplicated edges, consistent with motion, parallax, and residual geometric error that feather blending cannot remove.</p></div>
+      </article>
+    </section>
+    <figure class="result wide">
+      <img src="../pics/manhattan.jpeg" width="2493" height="904" alt="Manhattan waterfront panorama at sunset">
+    </figure>
   </main>
 
   <dialog class="lightbox" aria-label="Enlarged project image">
