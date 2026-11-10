@@ -339,8 +339,19 @@ td:nth-child(2) { white-space: nowrap; color: var(--blue-gray); }
   .mosaic-steps { display: block !important; }
   .mosaic-step-view img { display: block !important; width: 100% !important; max-width: 100% !important; max-height: 85mm !important; }
 
-  /* 打印时隐藏所有交互式按钮、滑块控件及覆盖圆点 */
-  .demo-controls, .point-toolbar, .point-marker, .wipe-stage, .wipe-range, .wipe-divider, .wipe-label, .detail-lens, .lightbox, .close-lightbox { display: none !important; }
+  .point-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3mm; }
+  .point-marker, .point-marker[aria-pressed="true"] {
+    display: grid !important;
+    width: 3.8mm; height: 3.8mm;
+    font: 700 8pt/1 sans-serif;
+    background: white; color: #263f5a;
+    border: .3mm solid #425a73;
+    opacity: 1; outline: none; box-shadow: none;
+    cursor: default;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  /* Hide controls while preserving numbered correspondence markers. */
+  .demo-controls, .point-toolbar, .wipe-stage, .wipe-range, .wipe-divider, .wipe-label, .detail-lens, .lightbox, .close-lightbox { display: none !important; }
   .demo-mode-view[hidden] { display: none !important; }
   .part-b-start { padding-top: 6mm; }
   .feature-corners { gap: 4mm; }
