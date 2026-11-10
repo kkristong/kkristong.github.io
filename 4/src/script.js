@@ -12,6 +12,7 @@ function openFigure(image) {
 }
 
 function makeZoomable(image) {
+  if (image.hasAttribute('data-no-zoom')) return;
   image.draggable = false;
   image.tabIndex = 0;
   image.setAttribute('role', 'button');
@@ -174,6 +175,7 @@ function initDetailLens() {
   const context = canvas.getContext('2d');
   function hide() { lens.hidden = true; }
   document.querySelectorAll('main .result img, .mosaic-step-view img').forEach(image => {
+    if (image.hasAttribute('data-no-zoom')) return;
     let position = {x:.5, y:.5};
     function imageBounds() {
       const box = image.getBoundingClientRect();

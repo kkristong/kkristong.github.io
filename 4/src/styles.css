@@ -351,3 +351,5 @@ td:nth-child(2) { white-space: nowrap; color: var(--blue-gray); }
   .feature-mosaic .stitch-comparison img { max-height: 90mm; }
   .feature-mosaic .result-discussion { font-size: 10.5pt; line-height: 1.4; margin-top: 4mm; }
 }
+
+.result img[data-no-zoom] { cursor: default; }
