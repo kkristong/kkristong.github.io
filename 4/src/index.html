@@ -204,8 +204,8 @@
     <section class="part part-b-start" id="b1" aria-labelledby="b1-heading">
       <h2 id="b1-heading">B.1 · Harris corners &amp; ANMS</h2>
       <div class="copy">
-        <p>For automatic stitching, I replace manually clicked points with detected features. I use the supplied Harris detector at a single scale, discarding a 20-pixel border. The storefront pair contains 7,035 corners in the source view and 6,569 in the reference.</p>
-        <p>Adaptive Non-Maximal Suppression (ANMS) measures each corner’s distance to its nearest sufficiently stronger neighbor, with c<sub>robust</sub> = 0.9. I keep the 500 largest suppression radii per image. Compared with the dense Harris output, these points cover the scene more evenly instead of clustering on textured regions.</p>
+        <p>I use the supplied single-scale Harris detector, excluding a 20-pixel border. It detects 7,035 source corners and 6,569 reference corners.</p>
+        <p>ANMS keeps 500 corners per image with the largest distances to a sufficiently stronger corner (c<sub>robust</sub> = 0.9), giving more even coverage.</p>
       </div>
       <div class="report-card feature-corners gallery two-up">
         <figure class="result"><img src="../pics/part%20B%20output/B1_scene1_harris_left.png" width="640" height="480" alt="Storefront source view with all Harris corners"><figcaption>source · Harris</figcaption></figure>
@@ -218,7 +218,7 @@
     <section class="part" id="b2" aria-labelledby="b2-heading">
       <h2 id="b2-heading">B.2 · feature descriptors</h2>
       <div class="copy">
-        <p>I blur each grayscale image with a Gaussian filter (σ = 2). Around every selected corner, I take a 40×40 window and sample every fifth pixel, starting at offset 2, to form an axis-aligned 8×8 descriptor. Subtracting its mean and dividing by its standard deviation reduces sensitivity to brightness and contrast changes.</p>
+        <p>I blur the grayscale image (σ = 2) and sample each 40×40 corner patch at 5-pixel intervals to obtain an axis-aligned 8×8 descriptor. Subtracting the mean and dividing by the standard deviation normalizes brightness and contrast.</p>
       </div>
       <p class="formula">d = (p − μ(p)) / (σ(p) + 10<sup>−8</sup>)</p>
       <div class="report-card descriptor-card">
@@ -235,14 +235,14 @@
 <figure class="descriptor-sample"><img src="../pics/part%20B%20output/B2_descriptor_10.png" width="8" height="8" alt="Normalized 8 by 8 feature descriptor 10"></figure>
         </div>
       </div>
-      <div class="copy"><p>Each image produces 500 descriptors, each with 64 values. These ten examples show the coarse intensity patterns used for matching; no rotation alignment is applied.</p></div>
+      <div class="copy"><p>Each image yields 500 descriptors of 64 values; ten examples are shown above.</p></div>
     </section>
 
     <section class="part" id="b3" aria-labelledby="b3-heading">
       <h2 id="b3-heading">B.3 · feature matching</h2>
       <div class="copy">
-        <p>For each source descriptor, I compute Euclidean distances to the reference descriptors. A match is accepted when the closest distance divided by the second-closest distance is below 0.7. This ratio test rejects descriptors with several similarly good candidates.</p>
-        <p>The storefront pair retains 61 tentative matches. Most lines connect the shared building, but appearance alone still allows incorrect correspondences, which are handled by RANSAC next.</p>
+        <p>I match descriptors using Euclidean distance and accept a pair when the nearest-to-second-nearest distance ratio is below 0.7, rejecting ambiguous matches.</p>
+        <p>The storefront pair retains 61 matches before RANSAC.</p>
       </div>
       <div class="report-card feature-matches">
         <figure class="result"><img src="../pics/part%20B%20output/notebook_figures/B3_matches.png" width="1590" height="608" alt="Sixty-one ratio-test feature matches connecting the storefront source and reference views"></figure>
@@ -252,15 +252,15 @@
     <section class="part" id="b4" aria-labelledby="b4-heading">
       <h2 id="b4-heading">B.4 · RANSAC &amp; automatic mosaics</h2>
       <div class="copy">
-        <p>I implemented 4-point RANSAC from scratch. Each of 2,000 trials samples four matches, estimates a homography with <code>computeH</code>, and projects all source points into the reference image. Matches with reprojection error below 3 pixels are counted as inliers. I keep the largest consensus set and refit H using all its inliers.</p>
-        <p>The final homography feeds the same inverse warping and feather blending used in Part A. Below, each manual result uses clicked correspondences, while each automatic result uses matched features and RANSAC.</p>
+        <p>My 4-point RANSAC runs 2,000 trials with a 3-pixel reprojection threshold, then refits H using the largest inlier set.</p>
+        <p>Manual stitching uses clicked points; automatic stitching uses feature matches and RANSAC. Both use the inverse warping and feather blending from Part A.</p>
       </div>
 
       <article class="mosaic-card feature-mosaic" aria-labelledby="auto-scene1-heading">
         <h3 id="auto-scene1-heading">scene 1 · storefronts</h3>
         <div class="gallery two-up mosaic-sources"><figure class="result"><img src="../pics/part%20A%20output/A1_scene1_source_left.png" width="640" height="480" alt="Scene 1 source photograph"><figcaption>source</figcaption></figure><figure class="result"><img src="../pics/part%20A%20output/A1_scene1_source_right.png" width="640" height="480" alt="Scene 1 reference photograph"><figcaption>reference</figcaption></figure></div>
         <figure class="result stitch-comparison"><img src="../pics/part%20B%20output/notebook_figures/B4_scene1_comparison.png" width="1790" height="705" alt="Side-by-side manually and automatically stitched storefront mosaics"></figure>
-        <div class="copy result-discussion"><p>RANSAC retains 51 of 61 matches. Both mosaics align the main storefront, although the automatic estimate changes the outer perspective and stretches the left edge more. Small alignment differences remain near the overlap.</p></div>
+        <div class="copy result-discussion"><p>RANSAC retains 51 of 61 matches. Both results align the storefront, but the automatic estimate stretches the left edge more.</p></div>
       </article>
 
       <article class="mosaic-card feature-mosaic" aria-labelledby="auto-scene2-heading">
@@ -270,14 +270,14 @@
           <figure class="result"><img src="../pics/part%20B%20output/B4_scene2_manual.png" width="3617" height="3005" alt="Manual mosaic of the updated clothing-store image pair"><figcaption>manual</figcaption></figure>
           <figure class="result"><img src="../pics/part%20B%20output/B4_scene2_automatic.png" width="2410" height="1962" alt="Automatic mosaic of the updated clothing-store image pair"><figcaption>automatic</figcaption></figure>
         </div>
-        <div class="copy result-discussion"><p>The automatic result has a different perspective from the manual estimate, with visible ghosting around clothing racks and people. The small RANSAC consensus makes this estimate less reliable than the other examples.</p></div>
+        <div class="copy result-discussion"><p>The automatic estimate changes the perspective and leaves ghosting around racks and people. Its small inlier set makes it less reliable.</p></div>
       </article>
 
       <article class="mosaic-card feature-mosaic" aria-labelledby="auto-scene3-heading">
         <h3 id="auto-scene3-heading">scene 3 · indoor atrium</h3>
         <div class="gallery two-up mosaic-sources"><figure class="result"><img src="../pics/part%20A%20output/A1_scene3_source_left.png" width="1280" height="960" alt="Scene 3 source photograph"><figcaption>source</figcaption></figure><figure class="result"><img src="../pics/part%20A%20output/A1_scene3_source_right.png" width="1280" height="960" alt="Scene 3 reference photograph"><figcaption>reference</figcaption></figure></div>
         <figure class="result stitch-comparison"><img src="../pics/part%20B%20output/notebook_figures/B4_scene3_comparison.png" width="1790" height="705" alt="Side-by-side manually and automatically stitched indoor-atrium mosaics"></figure>
-        <div class="copy result-discussion"><p>RANSAC retains 30 of 64 matches. The railing and atrium structure are broadly aligned in both results. People and nearby objects show duplicated edges, consistent with motion, parallax, and residual geometric error that feather blending cannot remove.</p></div>
+        <div class="copy result-discussion"><p>RANSAC retains 30 of 64 matches. Both results align the atrium structure, but duplicated edges remain around people and nearby objects due to motion, parallax, and alignment error.</p></div>
       </article>
     </section>
     <article class="mosaic-card feature-mosaic" aria-labelledby="scene4-heading">
